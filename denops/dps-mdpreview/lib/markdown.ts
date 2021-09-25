@@ -1,6 +1,8 @@
 // Rendering MarkDown to HTML
 import MarkdownIt from "https://esm.sh/markdown-it";
 import HighlightJs from "https://esm.sh/highlight.js";
+import KaTeX from "https://esm.sh/katex";
+import TexMath from "http://esm.sh/markdown-it-texmath";
 
 export default class Markdown {
   private md: typeof MarkdownIt;
@@ -19,21 +21,26 @@ export default class Markdown {
         return "";
       },
     });
+    this.md.use(TexMath, {
+      engine: KaTeX,
+      delimiters: "dollars",
+      katexOptions: { macros: { "\\RR": "\\mathbb{R}" } },
+    });
     const defaultRender = this.md.renderer.rules.link_open ||
       // @ts-ignore: 同下
       function (tokens, idx, options, _, self) {
         return self.renderToken(tokens, idx, options);
       };
     this.md.renderer.rules.link_open = function (
-    // @ts-ignore: 型定義が死ぬほど面倒いため
+      // @ts-ignore: 型定義が死ぬほど面倒いため
       tokens,
-    // @ts-ignore: 型定義が死ぬほど面倒いため
+      // @ts-ignore: 型定義が死ぬほど面倒いため
       idx,
-    // @ts-ignore: 型定義が死ぬほど面倒いため
+      // @ts-ignore: 型定義が死ぬほど面倒いため
       options,
-    // @ts-ignore: 型定義が死ぬほど面倒いため
+      // @ts-ignore: 型定義が死ぬほど面倒いため
       env,
-    // @ts-ignore: 型定義が死ぬほど面倒いため
+      // @ts-ignore: 型定義が死ぬほど面倒いため
       self,
     ) {
       const aIndex = tokens[idx].attrIndex("target");
