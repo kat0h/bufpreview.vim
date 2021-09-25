@@ -50,7 +50,7 @@ export default class Server {
 
     // クライアント
     this._body = Deno.readTextFileSync(
-      "./denops/dps-mdpreview/client/index.html",
+      new URL("./client/index.html", import.meta.url)
     );
   }
 
