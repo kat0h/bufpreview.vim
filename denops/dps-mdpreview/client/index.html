@@ -13,9 +13,15 @@
     <script>
       const closeWindow = () => {
         window.open('about:blank','_self').close();
+        document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
+        document.title = "Connection closed"
       }
 
-      const socket = new WebSocket('ws://localhost:'+location.port + '/ws');
+      const socket = new WebSocket('ws://localhost:'+location.port+'/ws');
+      socket.onerror = function(_) {
+        document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
+        document.title = "Connection closed"
+      }
       socket.addEventListener('message', function (event) {
         var res = JSON.parse(event.data)
         if (res.bufname != undefined) {
@@ -27,23 +33,17 @@
         if (res.cursorPos != undefined) {
           console.log(res.cursorPos)
         }
-        if (res.connect != undefined && res.connect == "exit") {
+        if (res.connect != undefined && res.connect == "close") {
           closeWindow()
         }
       })
-      socket.addEventListener('close', function (_) {
-        // Close window when connection is broken
-        closeWindow()
-      })
-      socket.addEventListener('error', function (_) {
-        // Close window when connection is broken
-        closeWindow()
-      })
+
     </script>
   </head>
 
   <body>
     <article class="markdown-body" id="render">
+      <h1 align="center">Loading...</h1>
     </article>
   </body>
 </html>

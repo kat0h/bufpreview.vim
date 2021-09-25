@@ -42,5 +42,6 @@ usage                                                           *dps_file_usage*
 
 ==============================================================================
 
-作った人
+Author
 kota kato
+vim:tw=78:ts=8:ft=help:norl:noet:fen:fdl=0:

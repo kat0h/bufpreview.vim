@@ -5,72 +5,53 @@ import * as op from "https://deno.land/x/denops_std@v2.0.0/option/mod.ts";
 import { open } from "https://deno.land/x/open@v0.0.2/index.ts";
 
 import Server from "./lib/server.ts";
-
-let port: number;
 let server: Server | undefined;
-let isOpen = false;
-
-const emptyPort = (s: number, e: number): number => {
-  let i = 0;
-  let n = false;
-  for (i = s; i < e; i++) {
-    try {
-      Deno.listen({ port: i }).close();
-    } catch (_) {
-      n = true;
-      continue;
-    }
-    n = false;
-    if (n == false) {
-      return i;
-    }
-  }
-  return -1;
-};
+const port = 8090;
 
 export function main(denops: Denops) {
-  const openMD = async () => {
-    // Check filetype
-    if (await op.filetype.get(denops) as string !== "markdown") {
-      console.error("This file is not markdown document");
-      return;
-    }
-
-    if (server == undefined) {
-      port = emptyPort(8000, 20000);
-      // Make new server
-      server = new Server(denops, port);
-      server.run();
-    } else {
-      server.init();
-    }
-    open(`http://localhost:${port}`);
-  };
-
-  const closeMD = () => {
-    if (server == undefined) {
-      return;
-    }
-    server.stop();
-  };
-
   denops.dispatcher = {
     async md(arg: unknown): Promise<void> {
       ensureString(arg);
 
-      if (arg === "open") {
-        await openMD();
-        isOpen = true;
-      } else if (arg === "close") {
-        await closeMD();
-        isOpen = false;
-      } else if (arg === "toggle") {
-        if (!isOpen) {
-          await openMD();
-        } else {
-          await closeMD();
+      const openServer = async () => {
+        // サーバーが既に開かれているなら
+        if (server != undefined) {
+          server.close();
         }
-        isOpen = !isOpen;
+        server = new Server(
+          denops,
+          (await denops.call("bufnr") as number),
+          port,
+          () => {
+            server = undefined;
+          },
+        );
+        server.run();
+        open(`http://localhost:${port}`);
+      };
+
+      const closeServer = () => {
+        if (server != undefined) {
+          server.close();
+          server = undefined;
+        }
+      };
+
+      if (arg === "open") {
+        if (await op.filetype.get(denops) == "markdown") {
+          openServer();
+        }
+      } else if (arg === "close") {
+        closeServer();
+      } else if (arg === "toggle") {
+        // if server is already started
+        if (server != undefined) {
+          closeServer();
+        } else {
+          if (await op.filetype.get(denops) == "markdown") {
+            openServer();
+          }
+        }
       }
     },
   },

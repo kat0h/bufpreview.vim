@@ -1,118 +1,137 @@
-import { listenAndServe } from "https://deno.land/std@0.108.0/http/server_legacy.ts";
-import {
-  acceptWebSocket,
-  WebSocket,
-} from "https://deno.land/std@0.108.0/ws/mod.ts";
 import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
 
 import Markdown from "./markdown.ts";
 import Buffer from "./buffer.ts";
 
 export default class Server {
-  private denops: Denops;
-  private port: number;
-  private body: string;
-
-  private serverStarted = false
-
-  private buffer: Buffer | undefined;
   private md = new Markdown();
 
-  socket: WebSocket | undefined;
+  private _denops: Denops;
+  private _bufnr: number;
+  private _port: number;
+  private _onClose: () => void;
 
-  constructor(denops: Denops, port: number) {
-    this.port = port;
-    this.body = Deno.readTextFileSync("./client/index.html");
-    this.denops = denops;
-    this.init();
-  }
+  private _buffer: Buffer;
+  private _listenner: Deno.Listener | undefined;
+  private _body: string;
 
-  async init() {
-    this.buffer = new Buffer(
-      this.denops,
-      await this.denops.call("bufnr") as number,
-      // TextChanged
-      (buffer) => {
-        if (this.socket == undefined) {
-          return;
-        }
-        const data = {
-          buf: this.md.toHTML(buffer.lines),
-        };
-        this.socket.send(JSON.stringify(data));
-      },
-      // CursorMoved
-      (buffer) => {
-        if (this.socket == undefined) {
-          return;
-        }
-        const data = {
-          cursorPos: buffer.cursorline,
-        };
-        this.socket.send(JSON.stringify(data));
-      },
+  private _socket: globalThis.WebSocket | undefined;
+
+  constructor(
+    denops: Denops,
+    bufnr: number,
+    port: number,
+    onClose: () => void,
+    // サーバ側で通信が切断された時に呼ばれます
+  ) {
+    this._denops = denops;
+    this._bufnr = bufnr;
+    this._port = port;
+    this._onClose = onClose;
+
+    this._buffer = new Buffer(denops, this._bufnr);
+
+    // 更新
+    this._buffer.events.on("textChanged", (buffer) => {
+      // socket開通確認
+      if (this._socket == undefined) {
+        return;
+      }
+      const data = {
+        buf: this.md.toHTML(buffer.lines),
+      };
+      this._socket.send(JSON.stringify(data));
+    });
+
+    // バッファが削除された時
+    this._buffer.events.on("bufDelete", (_) => {
+      this.close();
+    });
+
+    // クライアント
+    this._body = Deno.readTextFileSync(
+      "./denops/dps-mdpreview/client/index.html",
     );
   }
 
   run() {
-    if (this.serverStarted) {
-      return
-    }
-    listenAndServe(`:${this.port}`, (req) => {
-      if (req.method === "GET" && req.url === "/") {
-        // body
-        req.respond({
-          status: 200,
-          body: this.body,
-          headers: new Headers({
-            "content-type": "text/html",
-          }),
-        });
-      } else if (req.method === "GET" && req.url === "/ws") {
-        // Websocket
-        acceptWebSocket({
-          conn: req.conn,
-          bufWriter: req.w,
-          bufReader: req.r,
-          headers: req.headers,
-        }).then(async (sock: WebSocket) => {
-          this.socket = sock;
-          if (this.buffer != undefined) {
-            const data = {
-              buf: this.md.toHTML(this.buffer.lines),
-              bufname: this.buffer.bufname
-            };
-            this.socket.send(JSON.stringify(data));
-          }
-          try {
-            for await (const ev of sock) {
-              if (typeof ev === "string") {
-                console.log("ws: Text", ev);
-              }
-            }
-          } catch (_) {
-            if (!sock.isClosed) {
-              await sock.close(1000).catch(console.error);
-            }
-          }
-        }).catch(async (_) => {
-          await req.respond({ status: 400 });
-        });
-      } else {
-        // 404 Error
-        req.respond({ status: 404, body: "404" });
+    // port check
+    try {
+      const listener = Deno.listen({
+        port: this._port,
+      });
+      listener.close();
+    } catch (err) {
+      if (err instanceof Deno.errors.AddrInUse) {
+        console.error(`The port ${this._port} is already in use`);
+        return;
       }
+    }
+    this._listenner = Deno.listen({
+      port: this._port,
     });
-    this.serverStarted = true
+    this._serve(this._listenner);
   }
 
-  stop() {
-    if (this.buffer != undefined) {
-      this.buffer.remove();
+  private async _serve(listenner: Deno.Listener) {
+    const handleHttp = async (conn: Deno.Conn) => {
+      for await (const e of Deno.serveHttp(conn)) {
+        const { request, respondWith } = e;
+        // クライアントを送付
+        if (request.method === "GET" && new URL(request.url).pathname === "/") {
+          respondWith(
+            new Response(this._body, {
+              status: 200,
+              headers: new Headers({
+                "content-type": "text/html",
+              }),
+            }),
+          );
+        } else if (
+          request.method === "GET" && new URL(request.url).pathname === "/ws"
+        ) {
+          respondWith(this._wsHandle(request));
+        }
+      }
+    };
+    for await (const conn of listenner) {
+      handleHttp(conn);
     }
-    if (this.socket != undefined){
-      this.socket.send(JSON.stringify({connect: "exit"}))
+  }
+
+  // サーバとの通信
+  private _wsHandle(request: Request): Response {
+    const { socket, response } = Deno.upgradeWebSocket(request);
+    this._socket = socket;
+    socket.onopen = () => {
+      if (this._socket != undefined) {
+        // 初回接続時にバッファを送信する
+        this._buffer.events.emit("textChanged", this._buffer);
+        this._socket.send(JSON.stringify({ bufname: this._buffer.bufname }));
+      }
+    };
+    // ブラウザ側から通信が切断された時
+    socket.onclose = () => {
+      this.close();
+    };
+    socket.onmessage = (_) => {};
+    return response;
+  }
+
+  // 終了処理
+  close() {
+    this._buffer.close();
+    if (this._listenner != undefined) {
+      this._listenner.close();
+      this._listenner = undefined;
     }
-    this.socket = undefined
+    if (this._socket != undefined) {
+      if (this._socket.readyState !== this._socket.CLOSED) {
+        this._socket.send(JSON.stringify({ connect: "close" }));
+      }
+      this._socket.close();
+      this._socket = undefined;
+    }
+    this._onClose();
   }
 }

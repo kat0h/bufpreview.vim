@@ -4,9 +4,7 @@
 ![](https://user-images.githubusercontent.com/45391880/134754999-49232c5e-a5cc-471b-8c24-213f608e4461.gif)
 </p>
 
-> ⚠️ This Plugin is currently under development ⚠️
-  
-> ❤️ Powered by 🐜[denops.vim](https://github.com/vim-denops/denops.vim)🐜
+> Powerd By [denops.vim](https://github.com/vim-denops/denops.vim)🐜
 
 ## introduction
 Preview markdown on your browser.

@@ -1,36 +1,66 @@
 import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
 import * as autocmd from "https://deno.land/x/denops_std@v2.0.0/autocmd/mod.ts";
 import * as anonymous from "https://deno.land/x/denops_std@v2.0.0/anonymous/mod.ts";
+import EventEmitter from "https://deno.land/x/eventemitter@1.2.1/mod.ts";
 
+type BufferEvents = {
+  textChanged(buffer: Buffer): void;
+  cursorMoved(buffer: Buffer): void;
+  bufDelete(buffer: Buffer): void;
+};
+
+/*
+ * Vimのバッファを扱う
+ *
+ * constroctor
+ *  - denops: Denops
+ *  - bufnr: number
+ *    - バッファのbufnrを指定
+ *
+ * member
+ *  - events
+ *    バッファのイベントに対応するコールバックを登録
+ *    - textChanged
+ *    - cursorMoved
+ *    - bufDelete
+ *
+ * getter
+ *  - bufname: string
+ *    バッファの名前を取得
+ *  - lines: string[]
+ *    バッファの内容を取得
+ *
+ * function
+ *  - remove
+ *    バッファとの関連付けを解除
+ *    🚨 オブジェクト破棄前に必ず実行すること
+ */
 export default class Buffer {
   private _denops: Denops;
   private _bufnr: number;
+
   private _bufname = "";
   private _buf: string[] = [];
-
-  private _onTextChanged: ((buffer: Buffer) => void) | null;
-  private _onTextChangedCB = "";
-
-  private _cursorMoved: ((buffer: Buffer) => void) | null;
-  private _cusrorMovedCB = "";
   private _cursorLine = -1;
+
+  events: EventEmitter<BufferEvents>;
+  private _textChanged = "";
+  private _cursorMoved = "";
+  private _bufDelete = "";
 
   constructor(
     denops: Denops,
     bufnr: number,
-    onTextChanged: ((buffer: Buffer) => void) | null,
-    cursorMoved: ((buffer: Buffer) => void) | null,
   ) {
     this._denops = denops;
     this._bufnr = bufnr;
-
-    this._onTextChanged = onTextChanged;
-    this._cursorMoved = cursorMoved;
+    this.events = new EventEmitter<BufferEvents>();
 
     this.init();
   }
 
   private async init() {
+    // 初回バッファ取得
     this._buf = await this._denops.call(
       "getbufline",
       this._bufnr,
@@ -38,17 +68,29 @@ export default class Buffer {
       "$",
     ) as string[];
     this._bufname = await this._denops.call("expand", "%:t") as string;
+    this._cursorLine = (await this._denops.call("getcurpos") as number[])[1];
 
     // textchanged callback
-    this._onTextChangedCB = anonymous.add(this._denops, async () => {
+    this._textChanged = anonymous.add(this._denops, async () => {
       this._buf = await this._denops.call(
         "getbufline",
         this._bufnr,
         1,
         "$",
       ) as string[];
-      this.igniteOnTextChanged();
+      this.events.emit("textChanged", this);
     })[0];
+    // cursorMoved callback
+    this._cursorMoved = anonymous.add(this._denops, async () => {
+      this._cursorLine = (await this._denops.call("getcurpos") as number[])[1];
+      this.events.emit("cursorMoved", this);
+    })[0];
+    // bufLeave callback
+    this._bufDelete = anonymous.add(this._denops, () => {
+      console.log("bufdefaldfj");
+      this.events.emit("bufDelete", this);
+    })[0];
+
     await autocmd.group(
       this._denops,
       `${this._denops.name}-${this._bufnr}`,
@@ -56,34 +98,28 @@ export default class Buffer {
         helper.define(
           ["TextChanged", "TextChangedI", "TextChangedP"],
           "<buffer>",
-          `call denops#notify("${this._denops.name}", "${this._onTextChangedCB}", [])`,
+          `call denops#notify("${this._denops.name}", "${this._textChanged}", [])`,
         );
-      },
-    );
-
-    this._cursorLine = (await this._denops.call("getcurpos") as number[])[1];
-
-    // cursorMoved collback
-    this._cusrorMovedCB = anonymous.add(this._denops, async () => {
-      this._cursorLine = (await this._denops.call("getcurpos") as number[])[1];
-      this.ingiteCursorMoved();
-    })[0];
-    await autocmd.group(
-      this._denops,
-      `${this._denops.name}-${this._bufnr}`,
-      (helper) => {
         helper.define(
           ["CursorMoved", "CursorMovedI"],
           "<buffer>",
-          `call denops#notify("${this._denops.name}", "${this._cusrorMovedCB}", [])`,
+          `call denops#notify("${this._denops.name}", "${this._cursorMoved}", [])`,
+        );
+        helper.define(
+          ["BufDelete", "VimLeave"],
+          "<buffer>",
+          `call denops#notify("${this._denops.name}", "${this._bufDelete}", [])`,
         );
       },
     );
 
-    this.igniteOnTextChanged();
+    this.events.emit("textChanged", this);
+    this.events.emit("cursorMoved", this);
   }
 
-  async remove() {
+  // remove autocmd and anonymous function
+  async close() {
+    // remove autocmd
     await autocmd.group(
       this._denops,
       `${this._denops.name}-${this._bufnr}`,
@@ -94,10 +130,15 @@ export default class Buffer {
         );
       },
     );
+    // remove anonymous function
+    anonymous.remove(this._denops, this._textChanged);
+    anonymous.remove(this._denops, this._cursorMoved);
+    anonymous.remove(this._denops, this._bufDelete);
   }
 
+  // getter functions
   get bufname(): string {
-    return this._bufname
+    return this._bufname;
   }
 
   get lines(): string[] {
@@ -106,19 +147,5 @@ export default class Buffer {
 
   get cursorline(): number {
     return this._cursorLine;
-  }
-
-  private igniteOnTextChanged() {
-    if (this._onTextChanged == null) {
-      return;
-    }
-    this._onTextChanged(this);
-  }
-
-  private ingiteCursorMoved() {
-    if (this._cursorMoved == null) {
-      return;
-    }
-    this._cursorMoved(this);
   }
 }

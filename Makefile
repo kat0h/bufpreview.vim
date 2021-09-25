@@ -1,2 +1,0 @@
-test:
-	deno test
