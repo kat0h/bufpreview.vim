@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+
+    <!-- CSS for MarkDown -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
+    <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/xcode.min.css">
+
+    <title>Loading...</title>
+
+    <script>
+      const closeWindow = () => {
+        window.open('about:blank','_self').close();
+      }
+
+      const socket = new WebSocket('ws://localhost:'+location.port + '/ws');
+      socket.addEventListener('message', function (event) {
+        var res = JSON.parse(event.data)
+        if (res.bufname != undefined) {
+          document.title = res.bufname
+        }
+        if (res.buf != undefined) {
+          document.getElementById('render').innerHTML = res.buf
+        }          
+        if (res.cursorPos != undefined) {
+          console.log(res.cursorPos)
+        }
+        if (res.connect != undefined && res.connect == "exit") {
+          closeWindow()
+        }
+      })
+      socket.addEventListener('close', function (_) {
+        // Close window when connection is broken
+        closeWindow()
+      })
+      socket.addEventListener('error', function (_) {
+        // Close window when connection is broken
+        closeWindow()
+      })
+    </script>
+  </head>
+
+  <body>
+    <article class="markdown-body" id="render">
+    </article>
+  </body>
+</html>

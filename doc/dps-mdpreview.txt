@@ -1,0 +1,46 @@
+*dps-mdpreview.txt* A markdown previewer for vim and neovim
+
+==============================================================================
+installation                                        *dps-mdpreview-installation*
+
+this plugin depends on deno and denops.vim
+
+Install with vim-plug:
+>
+ Plug 'vim-denops/denops.vim'
+ Plug 'kat0h/dps-mdpreview'
+<
+
+Or install with dein.vim:
+>
+ call dein#add('vim-denops/denops.vim')
+ call dein#add('kat0h/dps-mdpreview')
+<
+
+Or install with minpac:
+>
+ call minpac#add('vim-denops/denops.vim')
+ call minpac#add('kat0h/dps-mdpreview')
+<
+
+Or install with Vundle:
+>
+ Plugin 'vim-denops/denops.vim'
+ Plugin 'kat0h/dps-mdpreview'
+<
+
+==============================================================================
+usage                                                           *dps_file_usage*
+
+>
+ " Start the preview
+ :PreviewMarkdown
+ " Stop the preview
+ :PreviewMarkdownStop
+ " Toggle the window
+ :PreviewMarkdownToggle
+
+==============================================================================
+
+作った人
+kota kato
