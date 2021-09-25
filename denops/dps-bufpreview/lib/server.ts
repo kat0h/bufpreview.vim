@@ -50,7 +50,7 @@ export default class Server {
 
     // クライアント
     this._body = Deno.readTextFileSync(
-      new URL("./client/index.html", import.meta.url),
+      new URL("./client/markdown.html", import.meta.url),
     );
   }
 
