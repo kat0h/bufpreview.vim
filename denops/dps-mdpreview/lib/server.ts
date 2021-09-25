@@ -111,9 +111,7 @@ export default class Server {
       }
     };
     // ブラウザ側から通信が切断された時
-    socket.onclose = () => {
-      this.close();
-    };
+    socket.onclose = () => {};
     socket.onmessage = (_) => {};
     return response;
   }

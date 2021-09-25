@@ -106,7 +106,7 @@ export default class Buffer {
           `call denops#notify("${this._denops.name}", "${this._cursorMoved}", [])`,
         );
         helper.define(
-          ["BufDelete", "VimLeave"],
+          ["BufDelete"],
           "<buffer>",
           `call denops#notify("${this._denops.name}", "${this._bufDelete}", [])`,
         );

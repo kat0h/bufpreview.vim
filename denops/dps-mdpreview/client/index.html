@@ -12,15 +12,18 @@
 
     <script>
       const closeWindow = () => {
-        window.open('about:blank','_self').close();
+        window.open('about:blank','_self').close()
         document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
         document.title = "Connection closed"
       }
 
-      const socket = new WebSocket('ws://localhost:'+location.port+'/ws');
+      const socket = new WebSocket('ws://localhost:'+location.port+'/ws')
       socket.onerror = function(_) {
         document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
         document.title = "Connection closed"
+      }
+      socket.onclose = function() {
+        closeWindow()
       }
       socket.addEventListener('message', function (event) {
         var res = JSON.parse(event.data)
