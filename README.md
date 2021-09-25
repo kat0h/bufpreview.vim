@@ -16,6 +16,7 @@ Main features:
 - 🏃 Fast asynchronus updates
 - 🎨 Syntax highlight
 - ❤️ Simple Dependency and easy to install
+- 🖋 KaTeX Support
 
 ## install & usage
 ### requirements
