@@ -1,7 +1,7 @@
-*dps-mdpreview.txt* A markdown previewer for vim and neovim
+*dps-bufpreview.txt* A markdown previewer for vim and neovim
 
 ==============================================================================
-installation                                        *dps-mdpreview-installation*
+installation                                        *dps-bufpreview-installation*
 
 this plugin depends on deno and denops.vim
 
@@ -30,7 +30,7 @@ Or install with Vundle:
 <
 
 ==============================================================================
-usage                                                           *dps_file_usage*
+usage                                                     *dps-bufpreview-usage*
 
 >
  " Start the preview
