@@ -10,10 +10,12 @@
 Preview markdown on your browser.
 
 Main features:
-- Supports Vim and Neovim
-- Fast asynchronus updates
-- Syntax highlight
-- Simple Dependency and easy to install
+- 💻 Multi Pratform Support
+- 💨 Quick launch
+- 🙌 Supports Vim and Neovim
+- 🏃 Fast asynchronus updates
+- 🎨 Syntax highlight
+- ❤️ Simple Dependency and easy to install
 
 ## install & usage
 ### requirements
