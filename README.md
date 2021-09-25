@@ -24,22 +24,22 @@ Main features:
 Install with [vim-plug](https://github.com/junegunn/vim-plug):
 ```vim
 Plug 'vim-denops/denops.vim'
-Plug 'kat0h/dps-mdpreview'
+Plug 'kat0h/dps-mdpreview.vim'
 ```
 
 Or install with [dein.vim](https://github.com/Shougo/dein.vim):
 ```vim
-call dein#add('kat0h/dps-mdpreview')
+call dein#add('kat0h/dps-mdpreview.vim')
 ```
 
 Or install with [minpac](https://github.com/k-takata/minpac):
 ```vim
-call minpac#add('kat0h/dps-mdpreview')
+call minpac#add('kat0h/dps-mdpreview.vim')
 ```
 
 Or install with [Vundle](https://github.com/VundleVim/Vundle.vim):
 ```vim
-Plugin 'kat0h/dps-mdpreview'
+Plugin 'kat0h/dps-mdpreview.vim'
 ```
 
 Commands:
@@ -51,3 +51,6 @@ Commands:
 " Toggle the window
 :PreviewMarkdownToggle
 ```
+
+## Author
+[Kota Kato](https://github.com/kat0h)
