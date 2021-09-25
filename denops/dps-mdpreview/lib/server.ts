@@ -50,7 +50,7 @@ export default class Server {
 
     // クライアント
     this._body = Deno.readTextFileSync(
-      new URL("./client/index.html", import.meta.url)
+      new URL("./client/index.html", import.meta.url),
     );
   }
 
@@ -102,6 +102,9 @@ export default class Server {
   // サーバとの通信
   private _wsHandle(request: Request): Response {
     const { socket, response } = Deno.upgradeWebSocket(request);
+    if (this._socket != undefined) {
+      this._socket.close();
+    }
     this._socket = socket;
     socket.onopen = () => {
       if (this._socket != undefined) {
