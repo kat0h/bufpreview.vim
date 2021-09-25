@@ -1,5 +1,4 @@
 import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
-import { execute } from "https://deno.land/x/denops_std@v2.0.0/helper/mod.ts";
 import { ensureString } from "https://deno.land/x/unknownutil@v1.1.2/mod.ts";
 import * as op from "https://deno.land/x/denops_std@v2.0.0/option/mod.ts";
 import { open } from "https://deno.land/x/open@v0.0.2/index.ts";
@@ -10,6 +9,7 @@ const port = 8090;
 
 export function main(denops: Denops) {
   denops.dispatcher = {
+
     async md(arg: unknown): Promise<void> {
       ensureString(arg);
 
@@ -40,6 +40,8 @@ export function main(denops: Denops) {
       if (arg === "open") {
         if (await op.filetype.get(denops) == "markdown") {
           openServer();
+        } else {
+          console.error("not a markdown file")
         }
       } else if (arg === "close") {
         closeServer();
@@ -54,14 +56,5 @@ export function main(denops: Denops) {
         }
       }
     },
-  },
-    // function definition
-    execute(
-      denops,
-      `
-      command! PreviewMarkdown call denops#notify('${denops.name}', 'md', ["open"])
-      command! PreviewMarkdownClose call denops#notify('${denops.name}', 'md', ["close"])
-      command! PreviewMarkdownToggle call denops#notify('${denops.name}', 'md', ["toggle"])
-    `,
-    );
+  }
 }

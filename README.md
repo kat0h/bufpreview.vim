@@ -10,7 +10,7 @@
 Preview markdown on your browser.
 
 Main features:
-- 💻 Multi Pratform Support
+- 💻 Multi Pratform Support (Windows is not tested)
 - 💨 Quick launch
 - 🙌 Supports Vim and Neovim
 - 🏃 Fast asynchronus updates
