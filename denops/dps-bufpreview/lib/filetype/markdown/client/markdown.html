@@ -22,6 +22,8 @@
       }
 
       // 行に最も近い要素を探索
+      // min = 0
+      //   ページの最後尾
       const sb = (res) => { 
         // 上方向
         min = res.cursorLine.linePos
@@ -44,16 +46,19 @@
           } else {
             break
           }
-          if (max > res.cursorLine.bufLengh) {
+          if (max >= res.cursorLine.bufLengh) {
             break
           }
         }
         return [min, max]
       }
 
-      const getOfs = (l) => {
+      const getOfs = (l, res) => {
         if (l == 0) {
           return 0
+        }
+        if (l >= res.cursorLine.bufLengh) {
+          return document.getElementById('render').clientHeight
         }
         e = document.getElementById(`source-line-${l}`).getBoundingClientRect().top + window.pageYOffset
         return e
@@ -79,7 +84,8 @@
           e = sb(res)
           c = e[0]
           d = e[1]
-          ofs = e.map((l) => getOfs(l))
+                console.log([c,d])
+          ofs = e.map((l) => getOfs(l, res))
           a = ofs[0]
           b = ofs[1]
           // スクロール位置の計算
