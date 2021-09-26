@@ -62,7 +62,7 @@ Commands:
 ## License
 MIT
 
-this plugin use these libraly
+this plugin uses these libraly
 - https://github.com/digitalmoksha/markdown-it-inject-linenumbers
 
 ## Author
