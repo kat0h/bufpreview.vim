@@ -84,18 +84,20 @@
           e = sb(res)
           c = e[0]
           d = e[1]
-                console.log([c,d])
-          ofs = e.map((l) => getOfs(l, res))
-          a = ofs[0]
-          b = ofs[1]
-          // スクロール位置の計算
-          pos = a + (res.cursorLine.linePos - c) * ((b - a) / ((d - c) == 0 ? 1 : (d - c)) )
+          if (c == d) {
+            pos = getOfs(c, res)
+          } else {
+            ofs = e.map((l) => getOfs(l, res))
+            a = ofs[0]
+            b = ofs[1]
+            // スクロール位置の計算
+            pos = a + (res.cursorLine.linePos - c) * ((b - a) / ((d - c) == 0 ? 1 : (d - c)) )
+          }
           window.scrollTo({
             left: 0,
             top: pos - document.getElementsByTagName('html')[0].clientHeight / 2,
             behavior: 'smooth'
           })
-          console.log(pos)
         }
         if (res.connect != undefined && res.connect == "close") {
           closeWindow()
