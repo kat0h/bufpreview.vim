@@ -4,8 +4,6 @@
 ![](https://user-images.githubusercontent.com/45391880/134791644-5f69ee3e-a6ab-4d24-878b-7131dc9a3f4c.gif)
 </p>
 
-Vim!!!!!!!!!!!!!!!!!!
-
 > Powerd By [denops.vim](https://github.com/vim-denops/denops.vim)🐜
 
 ## introduction
