@@ -59,6 +59,13 @@ Commands:
 :PreviewMarkdownToggle
 ```
 
+## Special Thanks
+- [https://github.com/vim-denops/denops.vim](https://github.com/vim-denops/denops.vim)
+- [https://github.com/iamcco/markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim)
+- [https://github.com/previm/previm](https://github.com/previm/previm)
+- [https://github.com/gamoutatsumi/dps-ghosttext.vim](https://github.com/gamoutatsumi/dps-ghosttext.vim)
+- [Vim-jp](https://vim-jp.org/)
+
 ## License
 MIT
 
