@@ -1,8 +1,10 @@
 <p align="center">
 ✨ Markdown preview for Vim and Neovim ✨
 
-![](https://user-images.githubusercontent.com/45391880/134754999-49232c5e-a5cc-471b-8c24-213f608e4461.gif)
+![](https://user-images.githubusercontent.com/45391880/134791644-5f69ee3e-a6ab-4d24-878b-7131dc9a3f4c.gif)
 </p>
+
+Vim!!!!!!!!!!!!!!!!!!
 
 > Powerd By [denops.vim](https://github.com/vim-denops/denops.vim)🐜
 
@@ -13,6 +15,7 @@ Main features:
 - 💻 Multi Pratform Support (Windows is not tested)
 - 💨 Quick launch
 - 🙌 Supports Vim and Neovim
+- 📡 Sync Cursor Position
 - 🏃 Fast asynchronus updates
 - 🎨 Syntax highlight
 - ❤️ Simple Dependency and easy to install
@@ -57,6 +60,12 @@ Commands:
 " Toggle the window
 :PreviewMarkdownToggle
 ```
+
+## License
+MIT
+
+this plugin use these libraly
+- https://github.com/digitalmoksha/markdown-it-inject-linenumbers
 
 ## Author
 [Kota Kato](https://github.com/kat0h)

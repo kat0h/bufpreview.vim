@@ -1,6 +1,6 @@
 import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
 
-import Markdown from "./markdown.ts";
+import Markdown from "./filetype/markdown/markdown.ts";
 import Buffer from "./buffer.ts";
 
 export default class Server {
@@ -43,6 +43,19 @@ export default class Server {
       this._socket.send(JSON.stringify(data));
     });
 
+    this._buffer.events.on("cursorMoved", (buffer) => {
+      if (this._socket == undefined) {
+        return;
+      }
+      const data ={
+        cursorLine: {
+          linePos: buffer.cursorline,
+          bufLengh: buffer.lines.length
+        }
+      }
+      this._socket.send(JSON.stringify(data))
+    })
+
     // バッファが削除された時
     this._buffer.events.on("bufDelete", (_) => {
       this.close();
@@ -50,7 +63,7 @@ export default class Server {
 
     // クライアント
     this._body = Deno.readTextFileSync(
-      new URL("./client/markdown.html", import.meta.url),
+      new URL("./filetype/markdown/client/markdown.html", import.meta.url),
     );
   }
 
@@ -110,6 +123,7 @@ export default class Server {
       if (this._socket != undefined) {
         // 初回接続時にバッファを送信する
         this._buffer.events.emit("textChanged", this._buffer);
+        this._buffer.events.emit("cursorMoved", this._buffer);
         this._socket.send(JSON.stringify({ bufname: this._buffer.bufname }));
       }
     };

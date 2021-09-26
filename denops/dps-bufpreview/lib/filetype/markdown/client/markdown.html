@@ -2,6 +2,8 @@
 <html>
   <head>
     <meta charset="utf-8"/>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=smoothscroll"></script>
 
     <!-- CSS for MarkDown -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
@@ -19,6 +21,44 @@
         document.title = "Connection closed"
       }
 
+      // 行に最も近い要素を探索
+      const sb = (res) => { 
+        // 上方向
+        min = res.cursorLine.linePos
+        while (true) {
+          e = document.getElementById(`source-line-${min}`)
+          if (e==null) {
+            min = min - 1
+          } else {
+            break
+          }
+          if (min < 1) {
+            break
+          }
+        }
+        max = res.cursorLine.linePos
+        while (true) {
+          e = document.getElementById(`source-line-${max}`)
+          if (e==null) {
+            max = max + 1
+          } else {
+            break
+          }
+          if (max > res.cursorLine.bufLengh) {
+            break
+          }
+        }
+        return [min, max]
+      }
+
+      const getOfs = (l) => {
+        if (l == 0) {
+          return 0
+        }
+        e = document.getElementById(`source-line-${l}`).getBoundingClientRect().top + window.pageYOffset
+        return e
+      }
+
       const socket = new WebSocket('ws://localhost:'+location.port+'/ws')
       socket.onerror = function(_) {
         document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
@@ -28,15 +68,28 @@
         closeWindow()
       }
       socket.addEventListener('message', function (event) {
-        var res = JSON.parse(event.data)
+        let res = JSON.parse(event.data)
         if (res.bufname != undefined) {
           document.title = res.bufname
         }
         if (res.buf != undefined) {
           document.getElementById('render').innerHTML = res.buf
         }          
-        if (res.cursorPos != undefined) {
-          console.log(res.cursorPos)
+        if (res.cursorLine != undefined) {
+          e = sb(res)
+          c = e[0]
+          d = e[1]
+          ofs = e.map((l) => getOfs(l))
+          a = ofs[0]
+          b = ofs[1]
+          // スクロール位置の計算
+          pos = a + (res.cursorLine.linePos - c) * ((b - a) / ((d - c) == 0 ? 1 : (d - c)) )
+          window.scrollTo({
+            left: 0,
+            top: pos - document.getElementsByTagName('html')[0].clientHeight / 2,
+            behavior: 'smooth'
+          })
+          console.log(pos)
         }
         if (res.connect != undefined && res.connect == "close") {
           closeWindow()
@@ -45,6 +98,9 @@
 
     </script>
     <style>
+      html {
+        scroll-behavior: smooth;
+      }
       .view {
         padding: 10px;
       }

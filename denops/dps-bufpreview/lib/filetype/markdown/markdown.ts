@@ -4,6 +4,8 @@ import HighlightJs from "https://esm.sh/highlight.js";
 import KaTeX from "https://esm.sh/katex";
 import TexMath from "http://esm.sh/markdown-it-texmath";
 
+import LineInjector from "./lib/markdown-it-inject-linenumbers.ts"
+
 export default class Markdown {
   private md: typeof MarkdownIt;
   constructor() {
@@ -21,11 +23,14 @@ export default class Markdown {
         return "";
       },
     });
+    // use KaTeX
     this.md.use(TexMath, {
       engine: KaTeX,
       delimiters: "dollars",
       katexOptions: { macros: { "\\RR": "\\mathbb{R}" } },
     });
+    // use line injector
+    this.md.use(LineInjector)
     const defaultRender = this.md.renderer.rules.link_open ||
       // @ts-ignore: 同下
       function (tokens, idx, options, _, self) {
