@@ -5,7 +5,6 @@ import { open } from "https://deno.land/x/open@v0.0.2/index.ts";
 
 import Server from "./lib/server.ts";
 let server: Server | undefined;
-const port = 8090;
 
 export function main(denops: Denops) {
   denops.dispatcher = {
@@ -21,13 +20,12 @@ export function main(denops: Denops) {
         server = new Server(
           denops,
           (await denops.call("bufnr") as number),
-          port,
           () => {
             server = undefined;
           },
         );
         server.run();
-        open(`http://localhost:${port}`);
+        open(`http://localhost:${server.port}`);
       };
 
       const closeServer = () => {

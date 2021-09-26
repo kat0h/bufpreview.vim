@@ -8,7 +8,6 @@ export default class Server {
 
   private _denops: Denops;
   private _bufnr: number;
-  private _port: number;
   private _onClose: () => void;
 
   private _buffer: Buffer;
@@ -20,13 +19,11 @@ export default class Server {
   constructor(
     denops: Denops,
     bufnr: number,
-    port: number,
     onClose: () => void,
     // サーバ側で通信が切断された時に呼ばれます
   ) {
     this._denops = denops;
     this._bufnr = bufnr;
-    this._port = port;
     this._onClose = onClose;
 
     this._buffer = new Buffer(denops, this._bufnr);
@@ -68,20 +65,8 @@ export default class Server {
   }
 
   run() {
-    // port check
-    try {
-      const listener = Deno.listen({
-        port: this._port,
-      });
-      listener.close();
-    } catch (err) {
-      if (err instanceof Deno.errors.AddrInUse) {
-        console.error(`The port ${this._port} is already in use`);
-        return;
-      }
-    }
     this._listenner = Deno.listen({
-      port: this._port,
+      port: 0,
     });
     this._serve(this._listenner);
   }
@@ -148,5 +133,13 @@ export default class Server {
       this._socket = undefined;
     }
     this._onClose();
+  }
+
+  get port(): number {
+    if (this._listenner == undefined) {
+      return -1;
+    }
+    // @ts-ignore: type is not exposed
+    return this._listenner.addr.port as number
   }
 }
