@@ -44,14 +44,14 @@ export default class Server {
       if (this._socket == undefined) {
         return;
       }
-      const data ={
+      const data = {
         cursorLine: {
           linePos: buffer.cursorline,
-          bufLengh: buffer.lines.length
-        }
-      }
-      this._socket.send(JSON.stringify(data))
-    })
+          bufLengh: buffer.lines.length,
+        },
+      };
+      this._socket.send(JSON.stringify(data));
+    });
 
     // バッファが削除された時
     this._buffer.events.on("bufDelete", (_) => {
@@ -140,6 +140,6 @@ export default class Server {
       return -1;
     }
     // @ts-ignore: type is not exposed
-    return this._listener.addr.port as number
+    return this._listener.addr.port as number;
   }
 }

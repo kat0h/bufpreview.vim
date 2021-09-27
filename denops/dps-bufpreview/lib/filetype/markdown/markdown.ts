@@ -5,7 +5,7 @@ import KaTeX from "https://esm.sh/katex";
 import TexMath from "http://esm.sh/markdown-it-texmath";
 import TaskList from "http://esm.sh/markdown-it-task-lists";
 
-import LineInjector from "./lib/markdown-it-inject-linenumbers.ts"
+import LineInjector from "./lib/markdown-it-inject-linenumbers.ts";
 
 export default class Markdown {
   private md: typeof MarkdownIt;
@@ -32,8 +32,8 @@ export default class Markdown {
       katexOptions: { macros: { "\\RR": "\\mathbb{R}" } },
     });
     // use line injector
-    this.md.use(LineInjector)
-    this.md.use(TaskList, {enabled: true})
+    this.md.use(LineInjector);
+    this.md.use(TaskList, { enabled: true });
     const defaultRender = this.md.renderer.rules.link_open ||
       // @ts-ignore: 同下
       function (tokens, idx, options, _, self) {

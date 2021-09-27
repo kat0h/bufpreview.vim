@@ -8,7 +8,6 @@ let server: Server | undefined;
 
 export function main(denops: Denops) {
   denops.dispatcher = {
-
     async md(arg: unknown): Promise<void> {
       ensureString(arg);
 
@@ -39,7 +38,7 @@ export function main(denops: Denops) {
         if (await op.filetype.get(denops) == "markdown") {
           openServer();
         } else {
-          console.error("not a markdown file")
+          console.error("not a markdown file");
         }
       } else if (arg === "close") {
         closeServer();
@@ -54,5 +53,5 @@ export function main(denops: Denops) {
         }
       }
     },
-  }
+  };
 }
