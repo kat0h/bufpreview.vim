@@ -12,6 +12,7 @@ export default class Markdown {
   constructor() {
     this.md = new MarkdownIt({
       html: true,
+      linkify: true,
       highlight: function (str: string, lang: string) {
         if (lang && HighlightJs.getLanguage(lang)) {
           try {
@@ -60,7 +61,6 @@ export default class Markdown {
       }
       return defaultRender(tokens, idx, options, env, self);
     };
-    this.md.linkify.set({ fuzzyEmail: false });
   }
   toHTML(lines: string[]): string {
     return this.md.render(lines.join("\n"));
