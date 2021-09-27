@@ -11,7 +11,7 @@ export default class Server {
   private _onClose: () => void;
 
   private _buffer: Buffer;
-  private _listenner: Deno.Listener | undefined;
+  private _listener: Deno.Listener | undefined;
   private _body: string;
 
   private _socket: globalThis.WebSocket | undefined;
@@ -65,10 +65,10 @@ export default class Server {
   }
 
   run() {
-    this._listenner = Deno.listen({
+    this._listener = Deno.listen({
       port: 0,
     });
-    this._serve(this._listenner);
+    this._serve(this._listener);
   }
 
   private async _serve(listenner: Deno.Listener) {
@@ -121,9 +121,9 @@ export default class Server {
   // 終了処理
   close() {
     this._buffer.close();
-    if (this._listenner != undefined) {
-      this._listenner.close();
-      this._listenner = undefined;
+    if (this._listener != undefined) {
+      this._listener.close();
+      this._listener = undefined;
     }
     if (this._socket != undefined) {
       if (this._socket.readyState !== this._socket.CLOSED) {
@@ -136,10 +136,10 @@ export default class Server {
   }
 
   get port(): number {
-    if (this._listenner == undefined) {
+    if (this._listener == undefined) {
       return -1;
     }
     // @ts-ignore: type is not exposed
-    return this._listenner.addr.port as number
+    return this._listener.addr.port as number
   }
 }
