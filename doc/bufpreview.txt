@@ -1,36 +1,36 @@
-*dps-bufpreview.txt* A markdown previewer for vim and neovim
+*bufpreview.txt* A markdown previewer for vim and neovim
 
 ==============================================================================
-installation                                        *dps-bufpreview-installation*
+installation                                           *bufpreview-installation*
 
 this plugin depends on deno and denops.vim
 
 Install with vim-plug:
 >
  Plug 'vim-denops/denops.vim'
- Plug 'kat0h/dps-bufpreview'
+ Plug 'kat0h/bufpreview'
 <
 
 Or install with dein.vim:
 >
  call dein#add('vim-denops/denops.vim')
- call dein#add('kat0h/dps-bufpreview')
+ call dein#add('kat0h/bufpreview')
 <
 
 Or install with minpac:
 >
  call minpac#add('vim-denops/denops.vim')
- call minpac#add('kat0h/dps-bufpreview')
+ call minpac#add('kat0h/bufpreview')
 <
 
 Or install with Vundle:
 >
  Plugin 'vim-denops/denops.vim'
- Plugin 'kat0h/dps-bufpreview'
+ Plugin 'kat0h/bufpreview'
 <
 
 ==============================================================================
-usage                                                     *dps-bufpreview-usage*
+usage                                                         *bufpreview-usage*
 
 >
  " Start the preview

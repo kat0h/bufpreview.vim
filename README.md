@@ -1,8 +1,9 @@
-<p align="center">
+<div align="center">
 ✨ Markdown preview for Vim and Neovim ✨
 
 ![](https://user-images.githubusercontent.com/45391880/134791644-5f69ee3e-a6ab-4d24-878b-7131dc9a3f4c.gif)
-</p>
+
+</div>
 
 > Powerd By [denops.vim](https://github.com/vim-denops/denops.vim)🐜
 
@@ -28,25 +29,25 @@ Main features:
 Install with [vim-plug](https://github.com/junegunn/vim-plug):
 ```vim
 Plug 'vim-denops/denops.vim'
-Plug 'kat0h/dps-bufpreview.vim'
+Plug 'kat0h/bufpreview.vim'
 ```
 
 Or install with [dein.vim](https://github.com/Shougo/dein.vim):
 ```vim
 call dein#add('vim-denops/denops.vim')
-call dein#add('kat0h/dps-bufpreview.vim')
+call dein#add('kat0h/bufpreview.vim')
 ```
 
 Or install with [minpac](https://github.com/k-takata/minpac):
 ```vim
 call minpac#add('vim-denops/denops.vim')
-call minpac#add('kat0h/dps-bufpreview.vim')
+call minpac#add('kat0h/bufpreview.vim')
 ```
 
 Or install with [Vundle](https://github.com/VundleVim/Vundle.vim):
 ```vim
 Plugin 'vim-denops/denops.vim'
-Plugin 'kat0h/dps-bufpreview.vim'
+Plugin 'kat0h/bufpreview.vim'
 ```
 
 Commands:
