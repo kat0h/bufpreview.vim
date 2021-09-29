@@ -112,9 +112,7 @@ export default class Server {
       }
     };
     // ブラウザ側から通信が切断された時
-    socket.onclose = () => {
-      this._closeSocket();
-    };
+    socket.onclose = () => {};
     socket.onmessage = (_) => {};
     return response;
   }
@@ -123,8 +121,8 @@ export default class Server {
     if (this._socket != undefined) {
       if (this._socket.readyState !== this._socket.CLOSED) {
         this._socket.send(JSON.stringify({ connect: "close" }));
-        this._socket.close();
       }
+      this._socket.close();
       this._socket = undefined;
     }
   }
