@@ -100,9 +100,8 @@ export default class Server {
   // サーバとの通信
   private _wsHandle(request: Request): Response {
     const { socket, response } = Deno.upgradeWebSocket(request);
-    if (this._socket != undefined) {
-      this._socket.close();
-    }
+    // 前回のsocketを閉じる
+    this._closeSocket();
     this._socket = socket;
     socket.onopen = () => {
       if (this._socket != undefined) {
@@ -113,9 +112,21 @@ export default class Server {
       }
     };
     // ブラウザ側から通信が切断された時
-    socket.onclose = () => {};
+    socket.onclose = () => {
+      this._closeSocket();
+    };
     socket.onmessage = (_) => {};
     return response;
+  }
+
+  private _closeSocket() {
+    if (this._socket != undefined) {
+      if (this._socket.readyState !== this._socket.CLOSED) {
+        this._socket.send(JSON.stringify({ connect: "close" }));
+        this._socket.close();
+      }
+      this._socket = undefined;
+    }
   }
 
   // 終了処理
@@ -125,13 +136,7 @@ export default class Server {
       this._listener.close();
       this._listener = undefined;
     }
-    if (this._socket != undefined) {
-      if (this._socket.readyState !== this._socket.CLOSED) {
-        this._socket.send(JSON.stringify({ connect: "close" }));
-      }
-      this._socket.close();
-      this._socket = undefined;
-    }
+    this._closeSocket();
     this._onClose();
   }
 

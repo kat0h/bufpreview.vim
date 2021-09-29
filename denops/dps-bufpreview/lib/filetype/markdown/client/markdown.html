@@ -69,9 +69,6 @@
         document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
         document.title = "Connection closed"
       }
-      socket.onclose = function() {
-        closeWindow()
-      }
       socket.addEventListener('message', function (event) {
         let res = JSON.parse(event.data)
         if (res.bufname != undefined) {
