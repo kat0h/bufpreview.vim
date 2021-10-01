@@ -1,4 +1,5 @@
 import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
+import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 
 import Markdown from "./filetype/markdown/markdown.ts";
 import Buffer from "./buffer.ts";
@@ -14,7 +15,7 @@ export default class Server {
   private _listener: Deno.Listener | undefined;
   private _body: string;
 
-  private _socket: globalThis.WebSocket | undefined;
+  private _sockets: Map<string, globalThis.WebSocket> = new Map<string, globalThis.WebSocket>();
 
   constructor(
     denops: Denops,
@@ -30,27 +31,25 @@ export default class Server {
 
     // 更新
     this._buffer.events.on("textChanged", (buffer) => {
-      // socket開通確認
-      if (this._socket == undefined) {
-        return;
-      }
       const data = {
         buf: this.md.toHTML(buffer.lines),
       };
-      this._socket.send(JSON.stringify(data));
+      
+      this._sockets.forEach((socket) => {
+        socket.send(JSON.stringify(data))
+      })
     });
 
     this._buffer.events.on("cursorMoved", (buffer) => {
-      if (this._socket == undefined) {
-        return;
-      }
       const data = {
         cursorLine: {
           linePos: buffer.cursorline,
           bufLengh: buffer.lines.length,
         },
       };
-      this._socket.send(JSON.stringify(data));
+      this._sockets.forEach((socket) => {
+        socket.send(JSON.stringify(data))
+      })
     });
 
     // バッファが削除された時
@@ -100,20 +99,18 @@ export default class Server {
   // サーバとの通信
   private _wsHandle(request: Request): Response {
     const { socket, response } = Deno.upgradeWebSocket(request);
-    if (this._socket != undefined) {
-      this._socket.close();
-    }
-    this._socket = socket;
+    const uid = v4.generate()
+
+    this._sockets.set(uid, socket)
     socket.onopen = () => {
-      if (this._socket != undefined) {
-        // 初回接続時にバッファを送信する
-        this._buffer.events.emit("textChanged", this._buffer);
-        this._buffer.events.emit("cursorMoved", this._buffer);
-        this._socket.send(JSON.stringify({ bufname: this._buffer.bufname }));
-      }
+      // 初回接続時にバッファを送信する
+      this._buffer.events.emit("textChanged", this._buffer);
+      this._buffer.events.emit("cursorMoved", this._buffer);
+      // 接続を確立したソケットのみに送信
+      socket.send(JSON.stringify({ bufname: this._buffer.bufname }));
     };
     // ブラウザ側から通信が切断された時
-    socket.onclose = () => {};
+    socket.onclose = () => {this._sockets.delete(uid)};
     socket.onmessage = (_) => {};
     return response;
   }
@@ -125,13 +122,12 @@ export default class Server {
       this._listener.close();
       this._listener = undefined;
     }
-    if (this._socket != undefined) {
-      if (this._socket.readyState !== this._socket.CLOSED) {
-        this._socket.send(JSON.stringify({ connect: "close" }));
+    this._sockets.forEach((socket) => {
+      if (socket.readyState !== socket.CLOSED) {
+        socket.send(JSON.stringify({ connect: "close" }));
       }
-      this._socket.close();
-      this._socket = undefined;
-    }
+      socket.close();
+    })
     this._onClose();
   }
 
