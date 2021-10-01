@@ -39,6 +39,7 @@ usage                                                         *bufpreview-usage*
  :PreviewMarkdownStop
  " Toggle the window
  :PreviewMarkdownToggle
+<
 
 ==============================================================================
 
