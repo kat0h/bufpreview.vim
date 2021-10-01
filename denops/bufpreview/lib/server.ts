@@ -1,5 +1,5 @@
 import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
-import { v4 } from 'https://deno.land/std/uuid/mod.ts';
+import { v4 } from "https://deno.land/std@0.109.0/uuid/mod.ts";
 
 import Markdown from "./filetype/markdown/markdown.ts";
 import Buffer from "./buffer.ts";
@@ -15,7 +15,10 @@ export default class Server {
   private _listener: Deno.Listener | undefined;
   private _body: string;
 
-  private _sockets: Map<string, globalThis.WebSocket> = new Map<string, globalThis.WebSocket>();
+  private _sockets: Map<string, globalThis.WebSocket> = new Map<
+    string,
+    globalThis.WebSocket
+  >();
 
   constructor(
     denops: Denops,
@@ -34,10 +37,10 @@ export default class Server {
       const data = {
         buf: this.md.toHTML(buffer.lines),
       };
-      
+
       this._sockets.forEach((socket) => {
-        socket.send(JSON.stringify(data))
-      })
+        socket.send(JSON.stringify(data));
+      });
     });
 
     this._buffer.events.on("cursorMoved", (buffer) => {
@@ -48,8 +51,8 @@ export default class Server {
         },
       };
       this._sockets.forEach((socket) => {
-        socket.send(JSON.stringify(data))
-      })
+        socket.send(JSON.stringify(data));
+      });
     });
 
     // バッファが削除された時
@@ -99,9 +102,9 @@ export default class Server {
   // サーバとの通信
   private _wsHandle(request: Request): Response {
     const { socket, response } = Deno.upgradeWebSocket(request);
-    const uid = v4.generate()
+    const uid = v4.generate();
 
-    this._sockets.set(uid, socket)
+    this._sockets.set(uid, socket);
     socket.onopen = () => {
       // 初回接続時にバッファを送信する
       this._buffer.events.emit("textChanged", this._buffer);
@@ -110,7 +113,9 @@ export default class Server {
       socket.send(JSON.stringify({ bufname: this._buffer.bufname }));
     };
     // ブラウザ側から通信が切断された時
-    socket.onclose = () => {this._sockets.delete(uid)};
+    socket.onclose = () => {
+      this._sockets.delete(uid);
+    };
     socket.onmessage = (_) => {};
     return response;
   }
@@ -127,7 +132,7 @@ export default class Server {
         socket.send(JSON.stringify({ connect: "close" }));
       }
       socket.close();
-    })
+    });
     this._onClose();
   }
 
