@@ -32,6 +32,7 @@ Or install with Vundle:
 ==============================================================================
 usage                                                         *bufpreview-usage*
 
+Commands:
 >
  " Start the preview
  :PreviewMarkdown
@@ -39,6 +40,14 @@ usage                                                         *bufpreview-usage*
  :PreviewMarkdownStop
  " Toggle the window
  :PreviewMarkdownToggle
+<
+
+Open preview window automatically:
+>
+  augroup bufpreview
+    autocmd!
+    autocmd Filetype markdown :PreviewMarkdown
+  augroup END
 <
 
 ==============================================================================

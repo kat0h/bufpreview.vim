@@ -60,13 +60,21 @@ Plugin 'kat0h/bufpreview.vim'
 
 Commands:
 
-```
+```vim
 " Start the preview
 :PreviewMarkdown
 " Stop the preview
 :PreviewMarkdownStop
 " Toggle the window
 :PreviewMarkdownToggle
+```
+
+Open preview window automatically:
+```vim
+augroup bufpreview
+  autocmd!
+  autocmd Filetype markdown :PreviewMarkdown
+augroup END
 ```
 
 ## Special Thanks
