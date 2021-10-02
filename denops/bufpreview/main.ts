@@ -26,7 +26,7 @@ export function main(denops: Denops) {
         server.run();
         const link = `http://localhost:${server.port}`;
         open(link).catch((_) => {
-          console.log(`Server started on ${link}`)
+          console.log(`Server started on ${link}`);
         });
       };
 
