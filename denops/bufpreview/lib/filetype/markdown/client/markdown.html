@@ -2,13 +2,12 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    
+
     <script src="https://polyfill.io/v3/polyfill.min.js?features=smoothscroll"></script>
 
     <!-- CSS for MarkDown -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/xcode.min.css">
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
 
@@ -24,11 +23,10 @@
       // 行に最も近い要素を探索
       // min = 0
       //   ページの最後尾
-      const sb = (res) => { 
-        // 上方向
-        min = res.cursorLine.linePos
+      const sb = (res) => {
+        let min = res.cursorLine.linePos
         while (true) {
-          e = document.getElementById(`source-line-${min}`)
+          let e = document.getElementById(`source-line-${min}`)
           if (e==null) {
             min = min - 1
           } else {
@@ -79,19 +77,20 @@
         }
         if (res.buf != undefined) {
           document.getElementById('render').innerHTML = res.buf
-        }          
+        }
         if (res.cursorLine != undefined) {
-          e = sb(res)
-          c = e[0]
-          d = e[1]
+          const e = sb(res)
+          const c = e[0]
+          const d = e[1]
+          let pos
           if (c == d) {
             pos = getOfs(c, res)
           } else {
-            ofs = e.map((l) => getOfs(l, res))
-            a = ofs[0]
-            b = ofs[1]
+            const ofs = e.map((l) => getOfs(l, res))
+            const a = ofs[0]
+            const b = ofs[1]
             // スクロール位置の計算
-            pos = a + (res.cursorLine.linePos - c) * ((b - a) / ((d - c) == 0 ? 1 : (d - c)) )
+            pos = a + (res.cursorLine.linePos - c) * ((b - a) / ((d - c)) )
           }
           window.scrollTo({
             left: 0,
@@ -114,7 +113,6 @@
       }
     </style>
   </head>
-
   <body>
     <div class="view">
       <article class="markdown-body" id="render">
