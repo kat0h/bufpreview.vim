@@ -4,7 +4,7 @@ augroup bufpreview
 augroup END
 
 function! s:init_bufpreview_markdown() abort
-  command! PreviewMarkdown call denops#notify('bufpreview', 'md', ["open"])
-  command! PreviewMarkdownClose call denops#notify('bufpreview', 'md', ["close"])
-  command! PreviewMarkdownToggle call denops#notify('bufpreview', 'md', ["toggle"])
+  command! PreviewMarkdown call denops#plugin#wait_async('bufpreview', {->denops#notify('bufpreview', 'md', ["open"])})
+  command! PreviewMarkdownClose call denops#plugin#wait_async('bufpreview', {->denops#notify('bufpreview', 'md', ["close"])})
+  command! PreviewMarkdownToggle call denops#plugin#wait_async('bufpreview', {->denops#notify('bufpreview', 'md', ["toggle"])})
 endfunction
