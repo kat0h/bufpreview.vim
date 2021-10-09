@@ -1,12 +1,9 @@
 import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
 import { v4 } from "https://deno.land/std@0.109.0/uuid/mod.ts";
 
-import Markdown from "./filetype/markdown/markdown.ts";
 import Buffer from "./buffer.ts";
 
 export default class Server {
-  private md = new Markdown();
-
   private _denops: Denops;
   private _bufnr: number;
   private _onClose: () => void;
@@ -35,7 +32,7 @@ export default class Server {
     // 更新
     this._buffer.events.on("textChanged", (buffer) => {
       const data = {
-        buf: this.md.toHTML(buffer.lines),
+        buf: buffer.lines
       };
 
       this._sockets.forEach((socket) => {
