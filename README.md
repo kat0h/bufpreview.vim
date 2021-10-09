@@ -16,7 +16,6 @@ Preview markdown on your browser.
 Main features:
 
 - 💻 Multi Pratform Support (Mac/Linux/Windows)
-- 💨 Quick launch
 - 🙌 Supports Vim and Neovim
 - 📡 Sync Cursor Position
 - 🏃 Fast asynchronus updates

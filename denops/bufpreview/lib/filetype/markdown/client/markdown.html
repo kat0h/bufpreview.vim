@@ -13,20 +13,84 @@
 
     <title>Loading...</title>
 
-    <script>
-      const closeWindow = () => {
+    <script type='module'>
+      import MarkdownIt from "https://esm.sh/markdown-it?bundle"
+      import HighlightJs from "https://esm.sh/highlight.js?bundle"
+      import KaTeX from "https://esm.sh/katex?bundle"
+      import TexMath from "http://esm.sh/markdown-it-texmath?bundle"
+      import TaskList from "http://esm.sh/markdown-it-task-lists?bundle"
+      import * as IncrementalDOM from "http://esm.sh/incremental-dom?bundle"
+      import MarkdownItIncrementalDOM from "http://esm.sh/markdown-it-incremental-dom?bundle"
+
+      const md = new MarkdownIt({
+        html: true,
+        linkify: true,
+        highlight: function (str, lang) {
+          if (lang && HighlightJs.getLanguage(lang)) {
+            try {
+              return HighlightJs.highlight(str, { language: lang }).value
+            } catch (__) {
+              console.log("err highlight.js")
+            }
+          }
+          return ""
+        },
+      })
+      // use incremental dom
+      md.use(MarkdownItIncrementalDOM, IncrementalDOM)
+      // use KaTeX
+      md.use(TexMath, {
+        engine: KaTeX,
+        delimiters: "dollars",
+        katexOptions: { macros: { "\\RR": "\\mathbb{R}" } },
+      })
+      // inject line numbers
+      function inject_linenumbers_plugin(md) {
+        function injectLineNumbers(tokens, idx, options, env, slf) {
+          let line
+          // if (tokens[idx].map && tokens[idx].level === 0) {
+          if (tokens[idx].map) {
+            line = tokens[idx].map[0] + 1
+            tokens[idx].attrJoin("id", `source-line-${String(line)}`)
+          }
+          return slf.renderToken(tokens, idx, options, env, slf)
+        }
+        md.renderer.rules.paragraph_open = injectLineNumbers
+        md.renderer.rules.heading_open = injectLineNumbers
+        md.renderer.rules.list_item_open = injectLineNumbers
+        md.renderer.rules.table_open = injectLineNumbers
+      }
+      md.use(inject_linenumbers_plugin)
+      // tasklist
+      md.use(TaskList, { enabled: true })
+      // Open link in new tab
+      const defaultRender = md.renderer.rules.link_open ||
+      function (tokens, idx, options, _, self) {
+        return self.renderToken(tokens, idx, options)
+      }
+      md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+        const aIndex = tokens[idx].attrIndex("target")
+        if (tokens[idx]["attrs"][0][1].match("http")) {
+          if (aIndex < 0) {
+            tokens[idx].attrPush(["target", "_blank"])
+          } else {
+            tokens[idx].attrs[aIndex][1] = "_blank"
+          }
+        }
+        return defaultRender(tokens, idx, options, env, self)
+      }
+
+      function closeWindow() {
         window.open('about:blank','_self').close()
         document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
         document.title = "Connection closed"
       }
 
-      // 行に最も近い要素を探索
-      // min = 0
-      //   ページの最後尾
-      const sb = (res) => {
+      function sb(res) {
         let min = res.cursorLine.linePos
+        let e
         while (true) {
-          let e = document.getElementById(`source-line-${min}`)
+          e = document.getElementById(`source-line-${min}`)
           if (e==null) {
             min = min - 1
           } else {
@@ -36,7 +100,7 @@
             break
           }
         }
-        max = res.cursorLine.linePos
+        let max = res.cursorLine.linePos
         while (true) {
           e = document.getElementById(`source-line-${max}`)
           if (e==null) {
@@ -51,15 +115,14 @@
         return [min, max]
       }
 
-      const getOfs = (l, res) => {
+      function getOfs(l, res) {
         if (l == 0) {
           return 0
         }
         if (l >= res.cursorLine.bufLengh) {
           return document.getElementById('render').clientHeight
         }
-        e = document.getElementById(`source-line-${l}`).getBoundingClientRect().top + window.pageYOffset
-        return e
+        return document.getElementById(`source-line-${l}`).getBoundingClientRect().top + window.pageYOffset
       }
 
       const socket = new WebSocket('ws://localhost:'+location.port+'/ws')
@@ -76,7 +139,10 @@
           document.title = res.bufname
         }
         if (res.buf != undefined) {
-          document.getElementById('render').innerHTML = res.buf
+          IncrementalDOM.patch(
+            document.getElementById('render'),
+            md.renderToIncrementalDOM(res.buf.join('\n'))
+          )
         }
         if (res.cursorLine != undefined) {
           const e = sb(res)
