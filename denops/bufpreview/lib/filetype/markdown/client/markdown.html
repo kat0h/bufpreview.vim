@@ -21,6 +21,7 @@
       import TaskList from "http://esm.sh/markdown-it-task-lists?bundle"
       import * as IncrementalDOM from "http://esm.sh/incremental-dom?bundle"
       import MarkdownItIncrementalDOM from "http://esm.sh/markdown-it-incremental-dom?bundle"
+      import MarkdownItMeta from "https://esm.sh/markdown-it-meta?bundle"
 
       const md = new MarkdownIt({
         html: true,
@@ -61,6 +62,8 @@
         md.renderer.rules.table_open = injectLineNumbers
       }
       md.use(inject_linenumbers_plugin)
+      // get yaml header
+      md.use(MarkdownItMeta)
       // tasklist
       md.use(TaskList, { enabled: true })
       // Open link in new tab
