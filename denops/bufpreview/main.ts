@@ -16,10 +16,11 @@ export function main(denops: Denops) {
       const openBrowserFn =
         (await vars.g.get(denops, "bufpreview_open_browser_fn") ||
           "") as string;
-      const host = await vars.b.get(denops, "bufpreview_server_host") ||
-        await vars.g.get(denops, "bufpreview_server_host") || "localhost";
-      const port = await vars.b.get(denops, "bufpreview_server_port") ||
-        await vars.g.get(denops, "bufpreview_server_port") || 0;
+      const host = (await vars.b.get(denops, "bufpreview_server_host") ||
+        await vars.g.get(denops, "bufpreview_server_host") ||
+        "localhost") as string;
+      const port = (await vars.b.get(denops, "bufpreview_server_port") ||
+        await vars.g.get(denops, "bufpreview_server_port") || 0) as number;
 
       const openServer = async () => {
         // サーバーが既に開かれているなら

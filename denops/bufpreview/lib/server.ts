@@ -32,7 +32,7 @@ export default class Server {
     // 更新
     this._buffer.events.on("textChanged", (buffer) => {
       const data = {
-        buf: buffer.lines
+        buf: buffer.lines,
       };
 
       this._sockets.forEach((socket) => {
@@ -63,7 +63,7 @@ export default class Server {
     );
   }
 
-  run(host: string, port: int) {
+  run(host: string, port: number) {
     this._listener = Deno.listen({
       hostname: host,
       port: port,
@@ -141,7 +141,7 @@ export default class Server {
     return this._listener.addr.hostname as string;
   }
 
- get port(): number {
+  get port(): number {
     if (this._listener == undefined) {
       return -1;
     }
