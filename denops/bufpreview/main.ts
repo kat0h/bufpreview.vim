@@ -1,6 +1,8 @@
 import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
 import { ensureString } from "https://deno.land/x/unknownutil@v1.1.2/mod.ts";
 import * as op from "https://deno.land/x/denops_std@v2.0.0/option/mod.ts";
+import * as fn from "https://deno.land/x/denops_std@v2.0.0/function/mod.ts";
+import * as vars from "https://deno.land/x/denops_std@v2.0.0/variable/mod.ts";
 import { open } from "https://deno.land/x/open@v0.0.2/index.ts";
 
 import Server from "./lib/server.ts";
@@ -10,6 +12,10 @@ export function main(denops: Denops) {
   denops.dispatcher = {
     async md(arg: unknown): Promise<void> {
       ensureString(arg);
+
+      const openBrowserFn =
+        (await vars.g.get(denops, "bufpreview_open_browser_fn") ||
+          "") as string;
 
       const openServer = async () => {
         // サーバーが既に開かれているなら
@@ -25,9 +31,13 @@ export function main(denops: Denops) {
         );
         server.run();
         const link = `http://localhost:${server.port}`;
-        open(link).catch((_) => {
-          console.log(`Server started on ${link}`);
-        });
+        if (openBrowserFn != "") {
+          await fn.call(denops, openBrowserFn, [link]);
+        } else {
+          open(link).catch((_) => {
+            console.log(`Server started on ${link}`);
+          });
+        }
       };
 
       const closeServer = () => {

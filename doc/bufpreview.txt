@@ -49,6 +49,13 @@ Open preview window automatically:
     autocmd Filetype markdown :PreviewMarkdown
   augroup END
 <
+==============================================================================
+configurations                                       *bufpreview-configurations*
+
+*g:bufpreview_open_browser_fn*
+(default: "")
+It represents a vim function name that opens preview window.
+The function receives a URL string of preview page.
 
 ==============================================================================
 
