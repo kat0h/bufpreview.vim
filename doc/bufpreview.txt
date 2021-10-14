@@ -58,6 +58,13 @@ It represents a vim function name that opens preview window.
 The function receives a URL string of preview page.
 
 ==============================================================================
+configurations                                       *bufpreview-configurations*
+
+*g:bufpreview_server_port* *b:bufpreview_server_port*
+(default: 0)
+They represent server ports for preview session.
+
+==============================================================================
 
 Author
 kota kato
