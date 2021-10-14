@@ -63,9 +63,9 @@ export default class Server {
     );
   }
 
-  run() {
+  run(port: int) {
     this._listener = Deno.listen({
-      port: 0,
+      port: port,
     });
     this._serve(this._listener);
   }

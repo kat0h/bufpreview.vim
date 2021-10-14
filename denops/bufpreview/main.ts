@@ -16,6 +16,8 @@ export function main(denops: Denops) {
       const openBrowserFn =
         (await vars.g.get(denops, "bufpreview_open_browser_fn") ||
           "") as string;
+      const port = await vars.b.get(denops, "bufpreview_server_port") ||
+        await vars.g.get(denops, "bufpreview_server_port") || 0;
 
       const openServer = async () => {
         // サーバーが既に開かれているなら
@@ -29,7 +31,7 @@ export function main(denops: Denops) {
             server = undefined;
           },
         );
-        server.run();
+        server.run(port);
         const link = `http://localhost:${server.port}`;
         if (openBrowserFn != "") {
           await fn.call(denops, openBrowserFn, [link]);
