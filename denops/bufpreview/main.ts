@@ -13,6 +13,11 @@ export function main(denops: Denops) {
     async md(arg: unknown): Promise<void> {
       ensureString(arg);
 
+      const browser =
+        (await vars.g.get(denops, "bufpreview_browser") || undefined) as
+          | string
+          | undefined;
+      const opener: { app?: string } = { app: browser };
       const openBrowserFn =
         (await vars.g.get(denops, "bufpreview_open_browser_fn") ||
           "") as string;
@@ -39,7 +44,7 @@ export function main(denops: Denops) {
         if (openBrowserFn != "") {
           await fn.call(denops, openBrowserFn, [link]);
         } else {
-          open(link).catch((_) => {
+          open(link, opener).catch((_) => {
             console.log(`Server started on ${link}`);
           });
         }
