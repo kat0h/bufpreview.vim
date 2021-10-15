@@ -63,9 +63,10 @@ export default class Server {
     );
   }
 
-  run() {
+  run(host: string, port: number) {
     this._listener = Deno.listen({
-      port: 0,
+      hostname: host,
+      port: port,
     });
     this._serve(this._listener);
   }
@@ -131,6 +132,13 @@ export default class Server {
       socket.close();
     });
     this._onClose();
+  }
+
+  get host(): string {
+    if (this._listener == undefined) {
+      return -1;
+    }
+    return this._listener.addr.hostname as string;
   }
 
   get port(): number {
