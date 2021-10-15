@@ -22,6 +22,7 @@
       import * as IncrementalDOM from "http://esm.sh/incremental-dom?bundle"
       import MarkdownItIncrementalDOM from "http://esm.sh/markdown-it-incremental-dom?bundle"
       import MarkdownItMeta from "https://esm.sh/markdown-it-meta?bundle"
+      import MarkdownItPlantuml from "https://esm.sh/markdown-it-plantuml?bundle"
 
       const md = new MarkdownIt({
         html: true,
@@ -39,6 +40,8 @@
       })
       // use incremental dom
       md.use(MarkdownItIncrementalDOM, IncrementalDOM)
+      // user plantuml
+      md.use(MarkdownItPlantuml)
       // use KaTeX
       md.use(TexMath, {
         engine: KaTeX,
