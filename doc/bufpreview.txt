@@ -57,9 +57,6 @@ configurations                                       *bufpreview-configurations*
 It represents a vim function name that opens preview window.
 The function receives a URL string of preview page.
 
-==============================================================================
-configurations                                       *bufpreview-configurations*
-
 *g:bufpreview_server_host* *b:bufpreview_server_host*
 (default: "localhost")
 They represent server host name for preview session.
