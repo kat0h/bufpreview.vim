@@ -18,7 +18,7 @@ export function main(denops: Denops) {
           "") as string;
       const host = (await vars.b.get(denops, "bufpreview_server_host") ||
         await vars.g.get(denops, "bufpreview_server_host") ||
-        "localhost") as string;
+        "127.0.0.1") as string;
       const port = (await vars.b.get(denops, "bufpreview_server_port") ||
         await vars.g.get(denops, "bufpreview_server_port") || 0) as number;
 
