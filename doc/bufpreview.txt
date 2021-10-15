@@ -57,6 +57,14 @@ configurations                                       *bufpreview-configurations*
 It represents a vim function name that opens preview window.
 The function receives a URL string of preview page.
 
+*g:bufpreview_browser*
+(default: "")
+Specifiies browser to preview.
+e.g.
+>
+  let g:bufpreview_browser = "chromium"
+>
+
 ==============================================================================
 
 Author

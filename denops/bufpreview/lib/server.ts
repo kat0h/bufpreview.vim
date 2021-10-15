@@ -32,7 +32,7 @@ export default class Server {
     // 更新
     this._buffer.events.on("textChanged", (buffer) => {
       const data = {
-        buf: buffer.lines
+        buf: buffer.lines,
       };
 
       this._sockets.forEach((socket) => {
