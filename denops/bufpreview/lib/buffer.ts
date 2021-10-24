@@ -87,7 +87,6 @@ export default class Buffer {
     })[0];
     // bufLeave callback
     this._bufDelete = anonymous.add(this._denops, () => {
-      console.log("bufdefaldfj");
       this.events.emit("bufDelete", this);
     })[0];
 

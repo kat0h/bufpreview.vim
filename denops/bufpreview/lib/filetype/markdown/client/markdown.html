@@ -1,192 +1,258 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8"/>
 
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=smoothscroll"></script>
+<head>
+  <meta charset="utf-8" />
 
-    <!-- CSS for MarkDown -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/xcode.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=smoothscroll"></script>
 
-    <title>Loading...</title>
+  <!-- CSS for MarkDown -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/xcode.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
 
-    <script type='module'>
-      import MarkdownIt from "https://esm.sh/markdown-it?bundle"
-      import HighlightJs from "https://esm.sh/highlight.js?bundle"
-      import KaTeX from "https://esm.sh/katex?bundle"
-      import TexMath from "http://esm.sh/markdown-it-texmath?bundle"
-      import TaskList from "http://esm.sh/markdown-it-task-lists?bundle"
-      import * as IncrementalDOM from "http://esm.sh/incremental-dom?bundle"
-      import MarkdownItIncrementalDOM from "http://esm.sh/markdown-it-incremental-dom?bundle"
-      import MarkdownItMeta from "https://esm.sh/markdown-it-meta?bundle"
+  <title>Loading...</title>
 
-      const md = new MarkdownIt({
-        html: true,
-        linkify: true,
-        highlight: function (str, lang) {
-          if (lang && HighlightJs.getLanguage(lang)) {
-            try {
-              return HighlightJs.highlight(str, { language: lang }).value
-            } catch (__) {
-              console.log("err highlight.js")
-            }
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #333;
+    }
+  </style>
+
+  <script type='module'>
+    import MarkdownIt from "https://esm.sh/markdown-it?bundle"
+    import HighlightJs from "https://esm.sh/highlight.js?bundle"
+    import KaTeX from "https://esm.sh/katex?bundle"
+    import TexMath from "http://esm.sh/markdown-it-texmath?bundle"
+    import TaskList from "http://esm.sh/markdown-it-task-lists?bundle"
+    import * as IncrementalDOM from "http://esm.sh/incremental-dom?bundle"
+    import MarkdownItIncrementalDOM from "http://esm.sh/markdown-it-incremental-dom?bundle"
+    import MarkdownItMeta from "https://esm.sh/markdown-it-meta?bundle"
+
+    const md = new MarkdownIt({
+      html: true,
+      linkify: true,
+      highlight: function (str, lang) {
+        if (lang && HighlightJs.getLanguage(lang)) {
+          try {
+            return HighlightJs.highlight(str, { language: lang }).value
+          } catch (__) {
+            console.log("err highlight.js")
           }
-          return ""
-        },
-      })
-      // use incremental dom
-      md.use(MarkdownItIncrementalDOM, IncrementalDOM)
-      // use KaTeX
-      md.use(TexMath, {
-        engine: KaTeX,
-        delimiters: "dollars",
-        katexOptions: { macros: { "\\RR": "\\mathbb{R}" } },
-      })
-      // inject line numbers
-      function inject_linenumbers_plugin(md) {
-        function injectLineNumbers(tokens, idx, options, env, slf) {
-          let line
-          // if (tokens[idx].map && tokens[idx].level === 0) {
-          if (tokens[idx].map) {
-            line = tokens[idx].map[0] + 1
-            tokens[idx].attrJoin("id", `source-line-${String(line)}`)
-          }
-          return slf.renderToken(tokens, idx, options, env, slf)
         }
-        md.renderer.rules.paragraph_open = injectLineNumbers
-        md.renderer.rules.heading_open = injectLineNumbers
-        md.renderer.rules.list_item_open = injectLineNumbers
-        md.renderer.rules.table_open = injectLineNumbers
+        return ""
+      },
+    })
+    // use incremental dom
+    md.use(MarkdownItIncrementalDOM, IncrementalDOM)
+    // use KaTeX
+    md.use(TexMath, {
+      engine: KaTeX,
+      delimiters: "dollars",
+      katexOptions: { macros: { "\\RR": "\\mathbb{R}" } },
+    })
+    // inject line numbers
+    function inject_linenumbers_plugin(md) {
+      function injectLineNumbers(tokens, idx, options, env, slf) {
+        let line
+        // if (tokens[idx].map && tokens[idx].level === 0) {
+        if (tokens[idx].map) {
+          line = tokens[idx].map[0] + 1
+          tokens[idx].attrJoin("id", `source-line-${String(line)}`)
+        }
+        return slf.renderToken(tokens, idx, options, env, slf)
       }
-      md.use(inject_linenumbers_plugin)
-      // get yaml header
-      md.use(MarkdownItMeta)
-      // tasklist
-      md.use(TaskList, { enabled: true })
-      // Open link in new tab
-      const defaultRender = md.renderer.rules.link_open ||
+      md.renderer.rules.paragraph_open = injectLineNumbers
+      md.renderer.rules.heading_open = injectLineNumbers
+      md.renderer.rules.list_item_open = injectLineNumbers
+      md.renderer.rules.table_open = injectLineNumbers
+    }
+    md.use(inject_linenumbers_plugin)
+    // get yaml header
+    md.use(MarkdownItMeta)
+    // tasklist
+    md.use(TaskList, { enabled: true })
+    // Open link in new tab
+    const defaultRender = md.renderer.rules.link_open ||
       function (tokens, idx, options, _, self) {
         return self.renderToken(tokens, idx, options)
       }
-      md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-        const aIndex = tokens[idx].attrIndex("target")
-        if (tokens[idx]["attrs"][0][1].match("http")) {
-          if (aIndex < 0) {
-            tokens[idx].attrPush(["target", "_blank"])
-          } else {
-            tokens[idx].attrs[aIndex][1] = "_blank"
-          }
+    md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+      const aIndex = tokens[idx].attrIndex("target")
+      if (tokens[idx]["attrs"][0][1].match("http")) {
+        if (aIndex < 0) {
+          tokens[idx].attrPush(["target", "_blank"])
+        } else {
+          tokens[idx].attrs[aIndex][1] = "_blank"
         }
-        return defaultRender(tokens, idx, options, env, self)
+      }
+      return defaultRender(tokens, idx, options, env, self)
+    }
+
+    function closeWindow() {
+      window.open('about:blank', '_self').close()
+      document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
+      document.title = "Connection closed"
+    }
+
+    function sb(res) {
+      let min = res.cursorLine.linePos
+      let e
+      while (true) {
+        e = document.getElementById(`source-line-${min}`)
+        if (e == null) {
+          min = min - 1
+        } else {
+          break
+        }
+        if (min < 1) {
+          break
+        }
+      }
+      let max = res.cursorLine.linePos
+      while (true) {
+        e = document.getElementById(`source-line-${max}`)
+        if (e == null) {
+          max = max + 1
+        } else {
+          break
+        }
+        if (max >= res.cursorLine.bufLengh) {
+          break
+        }
+      }
+      return [min, max]
+    }
+
+    function getOfs(l, res) {
+      if (l == 0) {
+        return 0
+      }
+      if (l >= res.cursorLine.bufLengh) {
+        return document.getElementById('render').clientHeight
+      }
+      return document.getElementById(`source-line-${l}`).getBoundingClientRect().top + window.pageYOffset
+    }
+
+    function make_table(data) {
+      var isObject = function (o) {
+        return (o instanceof Object && !(o instanceof Array)) ? true : false;
+      };
+      if (isObject(data)) {
+        // 辞書だった場合
+        var keys = document.createElement("tr")
+        var values = document.createElement("tr")
+        for (const key in md.meta) {
+          // key
+          var j = document.createElement("td")
+          // value
+          var k = document.createElement("td")
+          j.appendChild(make_table(key))
+          k.appendChild(make_table(data[key]))
+          keys.appendChild(j)
+          values.appendChild(k)
+        }
+        var ret = document.createElement("table")
+        ret.appendChild(keys)
+        ret.appendChild(values)
+        return ret
+      } else if (Array.isArray(data)) {
+        // 配列だった場合
+        var tbl = document.createElement("tr")
+        for (const i of data) {
+          var j = document.createElement("td")
+          j.appendChild(make_table(i))
+          tbl.appendChild(j)
+        }
+        var ret = document.createElement("table")
+        ret.appendChild(tbl)
+        return ret
+      } else {
+        // ただのデータ
+        return document.createElement("td").appendChild(document.createTextNode(data))
+      }
+    }
+
+    const socket = new WebSocket('ws://localhost:' + location.port + '/ws')
+    socket.onerror = function (_) {
+      document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
+      document.title = "Connection closed"
+    }
+    socket.onclose = function () {
+      closeWindow()
+    }
+    socket.addEventListener('message', function (event) {
+      let res = JSON.parse(event.data)
+      // バッファ名
+      if (res.bufname != undefined) {
+        document.title = res.bufname
       }
 
-      function closeWindow() {
-        window.open('about:blank','_self').close()
-        document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
-        document.title = "Connection closed"
+      // バッファ内容の更新
+      if (res.buf != undefined) {
+        IncrementalDOM.patch(
+          document.getElementById('render'),
+          md.renderToIncrementalDOM(res.buf.join('\n'))
+        )
+        const metatbl = document.getElementById("metatbl")
+        // 削除
+        while (metatbl.firstChild) {
+          metatbl.removeChild(metatbl.firstChild)
+        }
+        metatbl.appendChild(make_table(md.meta))
       }
 
-      function sb(res) {
-        let min = res.cursorLine.linePos
-        let e
-        while (true) {
-          e = document.getElementById(`source-line-${min}`)
-          if (e==null) {
-            min = min - 1
-          } else {
-            break
-          }
-          if (min < 1) {
-            break
-          }
+      // カーソルの移動
+      if (res.cursorLine != undefined) {
+        const e = sb(res)
+        const c = e[0]
+        const d = e[1]
+        let pos
+        if (c == d) {
+          pos = getOfs(c, res)
+        } else {
+          const ofs = e.map((l) => getOfs(l, res))
+          const a = ofs[0]
+          const b = ofs[1]
+          // スクロール位置の計算
+          pos = a + (res.cursorLine.linePos - c) * ((b - a) / ((d - c)))
         }
-        let max = res.cursorLine.linePos
-        while (true) {
-          e = document.getElementById(`source-line-${max}`)
-          if (e==null) {
-            max = max + 1
-          } else {
-            break
-          }
-          if (max >= res.cursorLine.bufLengh) {
-            break
-          }
-        }
-        return [min, max]
+        window.scrollTo({
+          left: 0,
+          top: pos - document.getElementsByTagName('html')[0].clientHeight / 2,
+          behavior: 'smooth'
+        })
       }
 
-      function getOfs(l, res) {
-        if (l == 0) {
-          return 0
-        }
-        if (l >= res.cursorLine.bufLengh) {
-          return document.getElementById('render').clientHeight
-        }
-        return document.getElementById(`source-line-${l}`).getBoundingClientRect().top + window.pageYOffset
-      }
-
-      const socket = new WebSocket('ws://localhost:'+location.port+'/ws')
-      socket.onerror = function(_) {
-        document.getElementById('render').innerHTML = '<h1 align="center">Connection closed</h1>'
-        document.title = "Connection closed"
-      }
-      socket.onclose = function() {
+      // 通信の切断
+      if (res.connect != undefined && res.connect == "close") {
         closeWindow()
       }
-      socket.addEventListener('message', function (event) {
-        let res = JSON.parse(event.data)
-        if (res.bufname != undefined) {
-          document.title = res.bufname
-        }
-        if (res.buf != undefined) {
-          IncrementalDOM.patch(
-            document.getElementById('render'),
-            md.renderToIncrementalDOM(res.buf.join('\n'))
-          )
-        }
-        if (res.cursorLine != undefined) {
-          const e = sb(res)
-          const c = e[0]
-          const d = e[1]
-          let pos
-          if (c == d) {
-            pos = getOfs(c, res)
-          } else {
-            const ofs = e.map((l) => getOfs(l, res))
-            const a = ofs[0]
-            const b = ofs[1]
-            // スクロール位置の計算
-            pos = a + (res.cursorLine.linePos - c) * ((b - a) / ((d - c)) )
-          }
-          window.scrollTo({
-            left: 0,
-            top: pos - document.getElementsByTagName('html')[0].clientHeight / 2,
-            behavior: 'smooth'
-          })
-        }
-        if (res.connect != undefined && res.connect == "close") {
-          closeWindow()
-        }
-      })
+    })
 
-    </script>
-    <style>
-      html {
-        scroll-behavior: smooth;
-      }
-      .view {
-        padding: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="view">
-      <article class="markdown-body" id="render">
-        <h1 align="center">Loading...</h1>
-      </article>
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .view {
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="view">
+    <div id="metatbl"></div>
+    <article class="markdown-body" id="render">
+      <h1 align="center">Loading...</h1>
+    </article>
     <div>
-  </body>
+</body>
+
 </html>
