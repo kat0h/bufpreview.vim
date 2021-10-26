@@ -1,5 +1,3 @@
-Work in progress 
-
 <div align="center">
 ✨ Markdown preview for Vim and Neovim ✨
 
@@ -20,6 +18,8 @@ Main features:
 - 📡 Sync Cursor Position
 - 🏃 Fast asynchronus updates
 - 🎨 Syntax highlight
+- 📊 Render yaml header
+- 📈 Render plantUML
 - ❤️ Simple Dependency and easy to install
 - 🖋 KaTeX Support
 
