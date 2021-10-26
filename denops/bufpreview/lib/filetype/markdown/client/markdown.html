@@ -12,15 +12,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
 
-  <style>
-    table {
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #333;
-    }
-  </style>
-
   <title>Loading...</title>
 
   <script type='module'>
@@ -147,32 +138,44 @@
       };
       if (isObject(data)) {
         // 辞書だった場合
+        // key (theadに入れる)
         var keys = document.createElement("tr")
+        // value (tbodyに入れる)
         var values = document.createElement("tr")
         for (const key in data) {
           // key
-          var j = document.createElement("td")
+          var j = document.createElement("th")
+          j.appendChild(make_table(key))
+          keys.appendChild(j)
           // value
           var k = document.createElement("td")
-          j.appendChild(make_table(key))
           k.appendChild(make_table(data[key]))
-          keys.appendChild(j)
           values.appendChild(k)
         }
+        // テーブルを作る
         var ret = document.createElement("table")
-        ret.appendChild(keys)
-        ret.appendChild(values)
+        // tbody
+        var thead = document.createElement("thead")
+        thead.appendChild(keys)
+        ret.appendChild(thead)
+        // tbody
+        var tbody = document.createElement("tbody")
+        tbody.appendChild(values)
+        ret.appendChild(tbody)
         return ret
       } else if (Array.isArray(data)) {
-        // 配列だった場合
+        // 配列だった場合 -> tbodyのみ
         var tbl = document.createElement("tr")
         for (const i of data) {
           var j = document.createElement("td")
           j.appendChild(make_table(i))
           tbl.appendChild(j)
         }
+        // tbodyに入れる
+        var tbody = document.createElement("tbody")
+        tbody.appendChild(tbl)
         var ret = document.createElement("table")
-        ret.appendChild(tbl)
+        ret.appendChild(tbody)
         return ret
       } else {
         // ただのデータ
@@ -251,7 +254,8 @@
 
 <body>
   <div class="view">
-    <div id="metatbl"></div>
+    <!-- TODO: meta tableをmarkdown-itの拡張として実装する -->
+    <div id="metatbl" class="markdown-body"></div>
     <article class="markdown-body" id="render">
       <h1 align="center">Loading...</h1>
     </article>
