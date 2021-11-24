@@ -1,7 +1,4 @@
-import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
-import * as autocmd from "https://deno.land/x/denops_std@v2.0.0/autocmd/mod.ts";
-import * as anonymous from "https://deno.land/x/denops_std@v2.0.0/anonymous/mod.ts";
-import EventEmitter from "https://deno.land/x/eventemitter@1.2.1/mod.ts";
+import { anonymous, autocmd, Denops, EventEmitter } from "./deps.ts";
 
 type BufferEvents = {
   textChanged(buffer: Buffer): void;

@@ -1,5 +1,5 @@
-import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
-import { v4 } from "https://deno.land/std@0.109.0/uuid/mod.ts";
+import { Denops } from "./deps.ts";
+import { v4 } from "./deps.ts";
 
 import Buffer from "./buffer.ts";
 

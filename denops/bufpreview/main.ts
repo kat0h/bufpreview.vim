@@ -1,11 +1,8 @@
-import { Denops } from "https://deno.land/x/denops_std@v2.0.0/mod.ts";
-import { ensureString } from "https://deno.land/x/unknownutil@v1.1.2/mod.ts";
-import * as op from "https://deno.land/x/denops_std@v2.0.0/option/mod.ts";
-import * as fn from "https://deno.land/x/denops_std@v2.0.0/function/mod.ts";
-import * as vars from "https://deno.land/x/denops_std@v2.0.0/variable/mod.ts";
-import { open } from "https://deno.land/x/open@v0.0.2/index.ts";
+import { Denops, ensureString, fn, op, open, vars } from "./lib/deps.ts";
 
 import Server from "./lib/server.ts";
+
+// 一度に開けるサーバーは一つ
 let server: Server | undefined;
 
 export function main(denops: Denops) {
@@ -13,6 +10,7 @@ export function main(denops: Denops) {
     async md(arg: unknown): Promise<void> {
       ensureString(arg);
 
+      // オプションを設定
       const browser =
         (await vars.g.get(denops, "bufpreview_browser") || undefined) as
           | string
@@ -27,6 +25,7 @@ export function main(denops: Denops) {
       const port = (await vars.b.get(denops, "bufpreview_server_port") ||
         await vars.g.get(denops, "bufpreview_server_port") || 0) as number;
 
+      // サーバーを開く
       const openServer = async () => {
         // サーバーが既に開かれているなら
         if (server != undefined) {
@@ -34,7 +33,7 @@ export function main(denops: Denops) {
         }
         server = new Server(
           denops,
-          (await denops.call("bufnr") as number),
+          await denops.call("bufnr") as number,
           () => {
             server = undefined;
           },
@@ -50,6 +49,7 @@ export function main(denops: Denops) {
         }
       };
 
+      // サーバーを閉じる
       const closeServer = () => {
         if (server != undefined) {
           server.close();

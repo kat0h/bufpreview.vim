@@ -71,6 +71,7 @@ Commands:
 ```
 
 Open preview window automatically:
+
 ```vim
 augroup bufpreview
   autocmd!
