@@ -4,6 +4,7 @@ import Server from "./lib/server.ts";
 
 // 一度に開けるサーバーは一つ
 let server: Server | undefined;
+let serverInitializing: boolean = false
 
 export function main(denops: Denops) {
   denops.dispatcher = {
@@ -27,6 +28,10 @@ export function main(denops: Denops) {
 
       // サーバーを開く
       const openServer = async () => {
+        if (serverInitializing) {
+          return
+        }
+        serverInitializing = true
         // サーバーが既に開かれているなら
         if (server != undefined) {
           server.close();
@@ -47,6 +52,7 @@ export function main(denops: Denops) {
             console.log(`Server started on ${link}`);
           });
         }
+        serverInitializing = false
       };
 
       // サーバーを閉じる
