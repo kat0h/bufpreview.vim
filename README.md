@@ -1,3 +1,6 @@
+This plugin is currently undergoing major changes.
+There may be many bugs in the current code.
+
 <div align="center">
 ✨ Markdown preview for Vim and Neovim ✨
 
