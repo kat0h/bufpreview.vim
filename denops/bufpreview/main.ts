@@ -1,9 +1,10 @@
-import { Denops, ensureString, fn, op, open, vars } from "./lib/deps.ts";
+import { Denops, ensureString, fn, Lock, op, open, vars } from "./lib/deps.ts";
 
 import Server from "./lib/server.ts";
 
 // 一度に開けるサーバーは一つ
 let server: Server | undefined;
+const lock = new Lock();
 
 export function main(denops: Denops) {
   denops.dispatcher = {
@@ -59,7 +60,9 @@ export function main(denops: Denops) {
 
       if (arg === "open") {
         if (await op.filetype.get(denops) == "markdown") {
-          openServer();
+          if (!lock.locked()) {
+            await lock.with(openServer);
+          }
         } else {
           console.error("not a markdown file");
         }
@@ -71,7 +74,9 @@ export function main(denops: Denops) {
           closeServer();
         } else {
           if (await op.filetype.get(denops) == "markdown") {
-            openServer();
+            if (!lock.locked()) {
+              await lock.with(openServer);
+            }
           }
         }
       }
