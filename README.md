@@ -1,5 +1,4 @@
-# THIS PLUGIN IS CURRENTLY BROKEN
-# CANNOT BE USED
+
 
 <div align="center">
 ✨ Markdown preview for Vim and Neovim ✨
