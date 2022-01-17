@@ -1,5 +1,5 @@
-This plugin is currently undergoing major changes.
-There may be many bugs in the current code.
+# THIS PLUGIN IS CURRENTLY BROKEN
+# CANNOT BE USED
 
 <div align="center">
 ✨ Markdown preview for Vim and Neovim ✨
