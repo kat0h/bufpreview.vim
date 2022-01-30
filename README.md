@@ -1,4 +1,7 @@
-
+This plugin is currently unavailable due to a policy change in esm.sh.
+Use the extensions below to avoid CORS errors, or consider using [imcco/markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim).
+https://chrome.google.com/webstore/detail/cross-domain-cors/mjhpgnbimicffchbodmgfnemoghjakai/related
+https://addons.mozilla.org/ja/firefox/addon/cross-domain-cors/
 
 <div align="center">
 ✨ Markdown preview for Vim and Neovim ✨
