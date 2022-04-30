@@ -1,5 +1,6 @@
 import { Denops } from "./deps.ts";
 import { v4 } from "./deps.ts";
+import { serveDir } from "./deps.ts";
 
 import Buffer from "./buffer.ts";
 
@@ -89,6 +90,14 @@ export default class Server {
           request.method === "GET" && new URL(request.url).pathname === "/ws"
         ) {
           respondWith(this._wsHandle(request));
+        } else if (
+          request.method === "GET"
+        ) {
+          respondWith(
+            serveDir(request, {
+              fsRoot: await this._denops.call("expand", "%:p:h") as string,
+            }),
+          );
         }
       }
     };
