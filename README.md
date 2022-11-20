@@ -31,35 +31,43 @@ Main features:
 - [Deno](https://deno.land) (>= 1.28.0)
 - [Chrome](https://www.google.co.jp/chrome/)/[Safari](https://www.apple.com/jp/safari/)/[Firefox](https://www.mozilla.org/ja/firefox/new/)
 
-Install with [vim-plug](https://github.com/junegunn/vim-plug):
+### Install with [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
 Plug 'vim-denops/denops.vim'
-Plug 'kat0h/bufpreview.vim'
+Plug 'kat0h/bufpreview.vim', { 'do': 'deno task prepare' }
 ```
 
-Or install with [dein.vim](https://github.com/Shougo/dein.vim):
+### Install with [dein.vim](https://github.com/Shougo/dein.vim), {'build': 'deno task prepare'}:
 
 ```vim
 call dein#add('vim-denops/denops.vim')
-call dein#add('kat0h/bufpreview.vim')
+call dein#add('kat0h/bufpreview.vim', {'build': 'deno task prepare'})
 ```
 
-Or install with [minpac](https://github.com/k-takata/minpac):
+### Install with [minpac](https://github.com/k-takata/minpac)
 
 ```vim
 call minpac#add('vim-denops/denops.vim')
-call minpac#add('kat0h/bufpreview.vim')
+call minpac#add('kat0h/bufpreview.vim', {'do': 'silent! !deno task prepare'})
 ```
 
-Or install with [Vundle](https://github.com/VundleVim/Vundle.vim):
+### Install with [Vundle](https://github.com/VundleVim/Vundle.vim)
 
 ```vim
 Plugin 'vim-denops/denops.vim'
 Plugin 'kat0h/bufpreview.vim'
 ```
 
-Commands:
+Then prepare the plugin manually where it was installed.
+
+i.e.
+
+```bash
+cd ~/.vim/bundle/bufpreview.vim && deno task prepare
+```
+
+### Commands
 
 ```vim
 " Start the preview
@@ -70,7 +78,7 @@ Commands:
 :PreviewMarkdownToggle
 ```
 
-Open preview window automatically:
+### Open preview window automatically
 
 ```vim
 augroup bufpreview
