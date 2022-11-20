@@ -11,7 +11,8 @@ export default class Server {
 
   private _buffer: Buffer;
   private _listener: Deno.Listener | undefined;
-  private _body: string;
+  private _main_body: string;
+  private _bundled_markdown_js: string;
 
   private _sockets: Map<string, globalThis.WebSocket> = new Map<
     string,
@@ -59,8 +60,11 @@ export default class Server {
     });
 
     // クライアント
-    this._body = Deno.readTextFileSync(
+    this._main_body = Deno.readTextFileSync(
       new URL("./filetype/markdown/client/markdown.html", import.meta.url),
+    );
+    this._bundled_markdown_js = Deno.readTextFileSync(
+      new URL("./filetype/markdown/client/markdown.bundle.js", import.meta.url),
     );
   }
 
@@ -79,7 +83,16 @@ export default class Server {
         // クライアントを送付
         if (request.method === "GET" && new URL(request.url).pathname === "/") {
           respondWith(
-            new Response(this._body, {
+            new Response(this._main_body, {
+              status: 200,
+              headers: new Headers({
+                "content-type": "text/html",
+              }),
+            }),
+          );
+        } else if (request.method === "GET" && new URL(request.url).pathname === "/markdown.bundle.js") {
+          respondWith(
+            new Response(this._bundled_markdown_js, {
               status: 200,
               headers: new Headers({
                 "content-type": "text/html",
