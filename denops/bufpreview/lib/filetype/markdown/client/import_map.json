@@ -1,0 +1,15 @@
+{
+  "imports": {
+    "markdown-it": "npm:markdown-it",
+    "highlight.js": "npm:highlight.js",
+    "katex": "npm:katex",
+    "markdown-it-texmath": "npm:markdown-it-texmath",
+    "markdown-it-task-lists": "npm:markdown-it-task-lists",
+    "incremental-dom": "npm:incremental-dom",
+    "markdown-it-incremental-dom": "npm:markdown-it-incremental-dom",
+    "markdown-it-meta": "npm:markdown-it-meta",
+    "markdown-it-plantuml": "npm:markdown-it-plantuml",
+    "punycode": "npm:punycode",
+    "events": "npm:events"
+  }
+}

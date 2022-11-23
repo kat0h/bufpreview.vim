@@ -1,0 +1,7 @@
+{
+  "tasks": {
+    "prepare": "deno task cache && deno task bundle",
+    "cache": "deno cache --import-map=denops/bufpreview/lib/filetype/markdown/client/import_map.json --node-modules-dir denops/bufpreview/lib/filetype/markdown/client/markdown.js",
+    "bundle": "deno run --allow-run --allow-read --allow-env --node-modules-dir denops/bufpreview/lib/filetype/markdown/client/esbuild.js"
+  }
+}
