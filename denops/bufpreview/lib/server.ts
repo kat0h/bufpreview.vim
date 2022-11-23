@@ -95,7 +95,7 @@ export default class Server {
             new Response(this._bundled_markdown_js, {
               status: 200,
               headers: new Headers({
-                "content-type": "text/html",
+                "content-type": "application/javascript",
               }),
             }),
           );

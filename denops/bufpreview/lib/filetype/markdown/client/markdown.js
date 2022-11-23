@@ -1,15 +1,3 @@
-// import MarkdownIt from "npm:markdown-it";
-// import HighlightJs from "npm:highlight.js";
-// import KaTeX from "npm:katex";
-// import TexMath from "npm:markdown-it-texmath";
-// import TaskList from "npm:markdown-it-task-lists";
-// import * as IncrementalDOM from "npm:incremental-dom";
-// import MarkdownItIncrementalDOM from "npm:markdown-it-incremental-dom";
-// import MarkdownItMeta from "npm:markdown-it-meta";
-// import MarkdownItPlantuml from "npm:markdown-it-plantuml";
-// import MarkdownItPlantuml from "npm:punycode";
-// import MarkdownItPlantuml from "npm:events";
-
 import PunyCode from "punycode";
 import Events from "events";
 
