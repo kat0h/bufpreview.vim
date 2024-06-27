@@ -90,7 +90,10 @@ export default class Server {
               }),
             }),
           );
-        } else if (request.method === "GET" && new URL(request.url).pathname === "/markdown.bundle.js") {
+        } else if (
+          request.method === "GET" &&
+          new URL(request.url).pathname === "/markdown.bundle.js"
+        ) {
           respondWith(
             new Response(this._bundled_markdown_js, {
               status: 200,
