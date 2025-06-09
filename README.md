@@ -31,6 +31,23 @@ Main features:
 - [Deno](https://deno.land) (>= 1.28.0)
 - [Chrome](https://www.google.co.jp/chrome/)/[Safari](https://www.apple.com/jp/safari/)/[Firefox](https://www.mozilla.org/ja/firefox/new/)
 
+### Install with [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+```lua
+{
+  'vim-denops/denops.vim',
+  lazy = false,
+},
+{
+  'kat0h/bufpreview.vim',
+  dependencies = { "vim-denops/denops.vim" },
+  build = "deno task prepare",
+  lazy = false,
+},
+```
+You don't need to lazy-load the denops plugin, since it loads its script files lazily by default.
+One issue to note is that deno task prepare modifies the plugin's own repository, which can cause lazy.nvim's update process to fail.
+
 ### Install with [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
@@ -38,7 +55,7 @@ Plug 'vim-denops/denops.vim'
 Plug 'kat0h/bufpreview.vim', { 'do': 'deno task prepare' }
 ```
 
-### Install with [dein.vim](https://github.com/Shougo/dein.vim), {'build': 'deno task prepare'}:
+### Install with [dein.vim](https://github.com/Shougo/dein.vim)
 
 ```vim
 call dein#add('vim-denops/denops.vim')
