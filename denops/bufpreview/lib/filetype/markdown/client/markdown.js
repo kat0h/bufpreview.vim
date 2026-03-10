@@ -209,13 +209,22 @@ socket.addEventListener("message", function (event) {
     // Render Mermaid
     document.querySelectorAll('code.language-mermaid').forEach(async (el) => {
       const pre = el.parentElement;
-      pre.style.display = 'none';
-
       const code = el.textContent;
 
-      const container = document.createElement('div');
-      container.className = 'mermaid-container';
-      pre.parentNode.insertBefore(container, pre.nextSibling);
+      // Skip if code hasn't changed
+      if (el.dataset.lastCode === code) {
+        return;
+      }
+      el.dataset.lastCode = code;
+      pre.style.display = 'none';
+
+      // Check if container already exists, otherwise create it
+      let container = pre.nextElementSibling;
+      if (!container || !container.classList.contains('mermaid-container')) {
+        container = document.createElement('div');
+        container.className = 'mermaid-container';
+        pre.parentNode.insertBefore(container, pre.nextSibling);
+      }
 
       if (mermaidCache.has(code)) {
         container.innerHTML = mermaidCache.get(code);
@@ -223,6 +232,9 @@ socket.addEventListener("message", function (event) {
       }
 
       try {
+        // Parse first to check syntax and avoid mermaid's default error UI
+        await mermaid.parse(code);
+
         const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
         const { svg } = await mermaid.render(id, code);
         mermaidCache.set(code, svg);
@@ -230,8 +242,11 @@ socket.addEventListener("message", function (event) {
           container.innerHTML = svg;
         }
       } catch (e) {
+        // Cache the error message too
+        const errorHtml = `<pre style="color: red;">${e}</pre>`;
+        mermaidCache.set(code, errorHtml);
         if (document.body.contains(container)) {
-          container.innerHTML = `<pre style="color: red;">${e}</pre>`;
+          container.innerHTML = errorHtml;
         }
       }
     });
