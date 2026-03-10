@@ -104,6 +104,16 @@ augroup bufpreview
 augroup END
 ```
 
+### Mermaid Support
+
+```mermaid
+graph TD
+  A[V] --> B[i];
+  A[V] --> C[i];
+  B[i] --> D[m];
+  C[i] --> D[m];
+```
+
 ## Special Thanks
 
 - [https://github.com/vim-denops/denops.vim](https://github.com/vim-denops/denops.vim)

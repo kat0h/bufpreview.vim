@@ -10,6 +10,10 @@ import * as IncrementalDOM from "incremental-dom";
 import MarkdownItIncrementalDOM from "markdown-it-incremental-dom";
 import MarkdownItMeta from "markdown-it-meta";
 import MarkdownItPlantuml from "markdown-it-plantuml";
+import mermaid from "mermaid";
+
+mermaid.initialize({ startOnLoad: false });
+const mermaidCache = new Map();
 
 const md = new MarkdownIt({
   html: true,
@@ -201,6 +205,51 @@ socket.addEventListener("message", function (event) {
       metatbl.removeChild(metatbl.firstChild);
     }
     metatbl.appendChild(make_table(md.meta));
+
+    // Render Mermaid
+    document.querySelectorAll('code.language-mermaid').forEach(async (el) => {
+      const pre = el.parentElement;
+      const code = el.textContent;
+
+      // Skip if code hasn't changed
+      if (el.dataset.lastCode === code) {
+        return;
+      }
+      el.dataset.lastCode = code;
+      pre.style.display = 'none';
+
+      // Check if container already exists, otherwise create it
+      let container = pre.nextElementSibling;
+      if (!container || !container.classList.contains('mermaid-container')) {
+        container = document.createElement('div');
+        container.className = 'mermaid-container';
+        pre.parentNode.insertBefore(container, pre.nextSibling);
+      }
+
+      if (mermaidCache.has(code)) {
+        container.innerHTML = mermaidCache.get(code);
+        return;
+      }
+
+      try {
+        // Parse first to check syntax and avoid mermaid's default error UI
+        await mermaid.parse(code);
+
+        const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
+        const { svg } = await mermaid.render(id, code);
+        mermaidCache.set(code, svg);
+        if (document.body.contains(container)) {
+          container.innerHTML = svg;
+        }
+      } catch (e) {
+        // Cache the error message too
+        const errorHtml = `<pre style="color: red;">${e}</pre>`;
+        mermaidCache.set(code, errorHtml);
+        if (document.body.contains(container)) {
+          container.innerHTML = errorHtml;
+        }
+      }
+    });
   }
 
   // カーソルの移動
